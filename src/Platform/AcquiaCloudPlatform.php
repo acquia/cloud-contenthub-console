@@ -91,6 +91,9 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $options = [];
     /** @var \AcquiaCloudApi\Response\ApplicationResponse $item */
     foreach ($applications->getAll() as $item) {
+      if ($item->hosting->type === 'acsf') {
+        continue;
+      }
       $options[$item->uuid] = $item->name;
     }
     $question = new ChoiceQuestion("Choose an Application: ", $options);
