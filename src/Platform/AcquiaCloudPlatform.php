@@ -141,10 +141,11 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $environment = $environments->get($environment_id);
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $environment->uuid));
+      $uri = $this->getActivedomain($environment_id);
       $sshUrl = $environment->sshUrl;
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
-      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$input->__toString()}'");
+      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$input->__toString()} --uri $uri'");
       $this->runner->run($process, $this, $output);
     }
   }
@@ -183,4 +184,17 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     return $sites;
   }
 
+  /**
+   * @param string $env_id
+   *
+   * @return string
+   */
+  protected function getActiveDomain(string $env_id): string {
+    $client = $this->getAceClient();
+    $response = $client->request('get', "/environments/{$env_id}");
+
+    return is_array($response) ? '' : $response->active_domain;
+  }
+
 }
+

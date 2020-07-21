@@ -45,3 +45,15 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
+  command.ace.cron_list:
+    class: Acquia\Console\Cloud\Command\AcquiaCloudCronList
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+  command.ace.cron_create:
+    class: Acquia\Console\Cloud\Command\AcquiaCloudCronCreate
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
