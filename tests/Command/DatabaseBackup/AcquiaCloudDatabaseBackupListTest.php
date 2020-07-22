@@ -58,7 +58,7 @@ class AcquiaCloudDatabaseBackupListTest extends AcquiaCloudDatabaseBackupTestBas
     ];
     $tester = $this->getCmdTesterInstanceOf(
       AcquiaCloudDatabaseBackupList::class,
-      $arguments
+      $arguments,
     );
     $tester->setInputs([1, 0])->execute([]);
     $output = $tester->getDisplay();
