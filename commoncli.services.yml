@@ -15,12 +15,6 @@ services:
     public: true
 
   #  Commands
-  command.ace.initialize:
-    class: Acquia\Console\Cloud\Command\ContentHubAcquiaCloudInit
-    public: true
-    arguments: ['@event_dispatcher']
-    tags:
-      - { name: common_console_command }
   command.ace.database.backup.create:
     class: Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate
     public: true

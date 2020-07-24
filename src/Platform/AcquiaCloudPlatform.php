@@ -177,23 +177,52 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $client = $this->getAceClient();
     $environments = new Environments($client);
     $sites = [];
-    foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
+    $environment_details = $this->get(self::ACE_ENVIRONMENT_DETAILS);
+    if (empty($environment_details)) {
+      return $sites;
+    }
+    foreach ($environment_details as $application_id => $environment_id) {
       $environment = $environments->get($environment_id);
-      $sites[] = [implode(', ', $environment->domains), static::getPlatformId()];
+      $sites[$environment->uuid] = [implode(', ', $environment->domains), static::getPlatformId()];
     }
     return $sites;
   }
 
   /**
+   * Gets site active domain by environment id.
+   *
    * @param string $env_id
+   *   Environment id.
    *
    * @return string
+   *   Return the domain or an empty string.
    */
   protected function getActiveDomain(string $env_id): string {
     $client = $this->getAceClient();
     $response = $client->request('get', "/environments/{$env_id}");
 
     return is_array($response) ? '' : $response->active_domain;
+  }
+
+  /**
+   * Gets active domains for all site in the platform.
+   *
+   * @return array
+   *   Array containing all active domains within the platform.
+   */
+  public function getActiveDomains(): array {
+    $client = $this->getAceClient();
+
+    $domains = [];
+    foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
+      $response = $client->request('get', "/environments/{$environment_id}");
+      $domains[] = [
+        'active_domain' => $response->active_domain,
+        'env_uuid' => $environment_id,
+      ];
+    }
+
+    return $domains;
   }
 
 }

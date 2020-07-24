@@ -27,12 +27,31 @@ class AcquiaCloudDatabaseBackupRestoreTest extends AcquiaCloudDatabaseBackupTest
         ],
       ],
     ];
+    $environment_response = $this->getFixture('ace_environment_response.php')['111111-11111111-c36a-401a-9724-fd8072a607d7'];
+    $db_response = $this->getFixture('ace_database_response.php');
     $backups_response = $this->getFixture('ace_backups_resp.php');
     $notification = $this->getFixture('ace_notification.php')['backup_restore'];
 
+    $arguments = [
+      'create backup' => [
+        'returns' => [
+          // First case.
+          $environment_response,
+          $db_response,
+          $backups_response,
+          $object,
+          // Second case.
+          $environment_response,
+          $db_response,
+          $backups_response,
+          $object,
+          $notification,
+        ],
+      ],
+    ];
     $tester = $this->getCmdTesterInstanceOf(
       AcquiaCloudDatabaseBackupRestore::class,
-      [$backups_response, $object, $backups_response, $object, $notification]
+      $arguments
     );
     $tester->setInputs([1, 0, '2017-01-08T05:00:02Z'])->execute([]);
     $output = $tester->getDisplay();

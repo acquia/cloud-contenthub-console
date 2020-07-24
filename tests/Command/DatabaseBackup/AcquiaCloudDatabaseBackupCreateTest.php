@@ -2,8 +2,8 @@
 
 namespace Acquia\Console\Cloud\Tests\Command\DatabaseBackup;
 
-use Acquia\Console\Cloud\Command\ContentHubAcquiaCloudInit;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
+use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 
 /**
  * Class AcquiaCloudDatabaseBackupCreateTest.
@@ -20,9 +20,7 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
    * @covers ::doRunCommand
    */
   public function testNoSitesAvailable() {
-    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudDatabaseBackupCreate::class, [], [
-      ContentHubAcquiaCloudInit::CONFIG_CLOUD_SITES => [],
-    ]);
+    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudDatabaseBackupCreate::class, [], [AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS => []]);
     $tester->execute([]);
     $output = $tester->getDisplay();
 
@@ -33,7 +31,7 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
    * @covers ::doRunCommand
    */
   public function testDatabaseCreate() {
-    $object = (object) [
+    $operation_response = (object) [
       'message' => 'Database backup created.',
       '_links' => (object) [
         'notification' => (object) [
@@ -41,20 +39,55 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
         ],
       ],
     ];
-    $notification = $this->getFixture('ace_notification.php')['backup_create'];
+    $environment_response = $this->getFixture('ace_environment_response.php')['111111-11111111-c36a-401a-9724-fd8072a607d7'];
+    $db_response = $this->getFixture('ace_database_response.php');
 
-    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudDatabaseBackupCreate::class, [$object, $object, $notification]);
-    $tester->setInputs([1, 0, 'no'])->execute([]);
+    $notification = $this->getFixture('ace_notification.php')['backup_create'];
+    $arguments = [
+      'create backup' => [
+        'arguments' => [
+          // Second case.
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          ['post','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
+          // Third case.
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          ['post','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
+          ['get','/notifications/2343b683-b194-4217-982a-6a95c72ad9a8'],
+        ],
+        'returns' => [
+          // Second case.
+          $environment_response,
+          $db_response,
+          $environment_response,
+          $db_response,
+          $operation_response,
+          // Third case.
+          $environment_response,
+          $db_response,
+          $operation_response,
+          $notification,
+        ],
+      ],
+    ];
+
+    // First case doesn't require input.
+    $tester = $this->getCmdTesterInstanceOf(AcquiaCloudDatabaseBackupCreate::class, $arguments);
+    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7', 'example', 'no'])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Backup process terminated by user', $output);
-
-    $tester->setInputs([1, 0, 'yes'])->execute([]);
+    // Second case.
+    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7', 'example', 'yes'])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Process has been queued. Check the task logs for more information.', $output);
 
-    $tester->setInputs([1, 0, 'yes'])->execute(['--wait' => TRUE]);
+    // Third case.
+    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7', 'example', 'yes'])->execute(['--wait' => TRUE]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Database created', $output, 'Wait function works.');

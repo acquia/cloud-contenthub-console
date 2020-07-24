@@ -121,7 +121,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
    *   Return site info from platform config.
    */
   protected function getSiteInfo(): array {
-    return $this->platform->get('acquia.cloud.sites');
+    return $this->platform->getActiveDomains();
   }
 
   /**

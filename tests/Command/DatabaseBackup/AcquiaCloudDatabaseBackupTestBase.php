@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\Cloud\Tests\Command\DatabaseBackup;
 
-use Acquia\Console\Cloud\Command\ContentHubAcquiaCloudInit;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
 use Acquia\Console\Cloud\Tests\Command\PlatformCommandTestHelperTrait;
@@ -29,6 +28,8 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
    *   The command to instantiate.
    * @param array $client_response
    *   The expected client response.
+   * @param array $config_overwrite
+   *   The platform configuration override.
    *
    * @return \Symfony\Component\Console\Tester\CommandTester
    *   The command tester.
@@ -46,7 +47,6 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
       }
     }
     $cmd->addPlatform('test', $platform);
-
     return $this->getCommandTester($cmd);
   }
 
@@ -55,7 +55,19 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
    */
   public function getPlatform(array $args = []): PlatformInterface {
     $client_mock_callback = function (MockObject $client) use ($args) {
-      $client->method('request')->willReturnOnConsecutiveCalls(...$args);
+      foreach ($args as $arg) {
+        if (empty($arg['returns'])) {
+          continue;
+        }
+        if (!empty($arg['arguments'])) {
+          $client->method('request')
+            ->withConsecutive(...$arg['arguments'])
+            ->willReturnOnConsecutiveCalls(...$arg['returns']);
+        } else {
+          $client->method('request')
+            ->willReturnOnConsecutiveCalls(...$arg['returns']);
+        }
+      }
     };
 
     return $this->getAcquiaCloudPlatform(
@@ -63,7 +75,9 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
         AcquiaCloudPlatform::ACE_API_KEY => 'test_key',
         AcquiaCloudPlatform::ACE_API_SECRET => 'test_secret',
         AcquiaCloudPlatform::ACE_APPLICATION_ID => ['test1'],
-        ContentHubAcquiaCloudInit::CONFIG_CLOUD_SITES => $this->getFixture('ace_sites.php'),
+        AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS => [
+          '111111-11111111-c36a-401a-9724-fd8072a607d7'=>'111111-11111111-c36a-401a-9724-fd8072a607d7'
+        ]
       ],
       $client_mock_callback
     );

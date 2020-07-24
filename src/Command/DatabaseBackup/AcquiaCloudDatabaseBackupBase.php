@@ -3,7 +3,6 @@
 namespace Acquia\Console\Cloud\Command\DatabaseBackup;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
-use Acquia\Console\Cloud\Command\ContentHubAcquiaCloudInit;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,32 +20,42 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $helper = $this->getHelper('question');
-    $options = $this->getAceSites();
+    /** @var \Acquia\Console\Cloud\Platform\AcquiaCloudPlatform $platform */
+    $platform = $this->getPlatform('source');
+    $options = $platform->getPlatformSites();
     if (empty($options)) {
       $output->writeln('No sites have been registered in the current platform.');
       return 0;
     }
 
-    $sites = array_column($options, 'active_domain');
-    $options = array_combine($sites, $options);
+    $sites = [];
+    foreach ($options as $uuid => $site_data) {
+      $sites[$uuid] = $site_data[0];
+    }
     $choice = new ChoiceQuestion('Please choose the site you would like to manage a database backup for:', $sites);
     $site = $helper->ask($input, $output, $choice);
 
-    $databases = $options[$site]['databases'];
+    $databases = [];
+    foreach ($this->getDatabasesByEnvironment($site) as $db_info) {
+      $databases[$db_info->id] = $db_info->name;
+    }
     $choice = new ChoiceQuestion('Choose a database:', array_values($databases));
     $db = $helper->ask($input, $output, $choice);
 
-    return $this->doRunCommand($options[$site]['env_uuid'], $db, $input, $output);
+    return $this->doRunCommand($site, $db, $input, $output);
   }
 
   /**
-   * Returns the acquia cloud sites stored in active profile.
+   * Make request against /environments/{environment_uuid}/databases endpoint.
+   *
+   * @param string $env_uuid
+   *   Environment uuid.
    *
    * @return array
-   *   Acquia cloud sites.
+   *   Response of API call (DB info).
    */
-  protected function getAceSites(): array {
-    return $this->platform->get(ContentHubAcquiaCloudInit::CONFIG_CLOUD_SITES) ?? [];
+  protected function getDatabasesByEnvironment(string $env_uuid) {
+    return $this->acquiaCloudClient->request('get', "/environments/$env_uuid/databases");
   }
 
   /**
