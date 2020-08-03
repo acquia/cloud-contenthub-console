@@ -9,10 +9,6 @@ services:
     arguments: ['@http_client_factory.acquia_cloud']
     tags:
       - { name: kernel.event_subscriber }
-  factory.platform.ace:
-    class: Acquia\Console\Cloud\Platform\Factory\AcquiaCloudPlatformFactory
-    arguments: ['@http_client_factory.acquia_cloud', '@platform.storage']
-    public: true
 
   #  Commands
   command.ace.database.backup.create:

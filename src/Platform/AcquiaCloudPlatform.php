@@ -11,12 +11,14 @@ use Consolidation\Config\ConfigInterface;
 use EclipseGc\CommonConsole\Platform\PlatformBase;
 use EclipseGc\CommonConsole\Platform\PlatformSitesInterface;
 use EclipseGc\CommonConsole\Platform\PlatformStorage;
+use EclipseGc\CommonConsole\PlatformDependencyInjectionInterface;
 use EclipseGc\CommonConsole\ProcessRunner;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -24,7 +26,7 @@ use Symfony\Component\Process\Process;
  *
  * @package Acquia\Console\Cloud\Platform
  */
-class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface {
+class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface, PlatformDependencyInjectionInterface {
 
   const PLATFORM_NAME = "Acquia Cloud";
 
@@ -48,6 +50,18 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
   public function __construct(ConfigInterface $config, ProcessRunner $runner, PlatformStorage $storage, AcquiaCloudClientFactory $clientFactory) {
     parent::__construct($config, $runner, $storage);
     $this->clientFactory = $clientFactory;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container, ConfigInterface $config, ProcessRunner $runner, PlatformStorage $storage): PlatformDependencyInjectionInterface {
+    return new static(
+      $config,
+      $runner,
+      $storage,
+      $container->get('http_client_factory.acquia_cloud')
+    );
   }
 
   /**

@@ -59,7 +59,6 @@ class PlatformSubscriberAcquiaCloud implements EventSubscriberInterface {
   public function onGetPlatformType(GetPlatformTypeEvent $event) {
     if ($event->getPlatformType() === AcquiaCloudPlatform::getPlatformId()) {
       $event->addClass(AcquiaCloudPlatform::class);
-      $event->addFactory('factory.platform.ace');
       $event->stopPropagation();;
     }
   }
