@@ -8,6 +8,7 @@ use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
 use Consolidation\Config\Config;
 use Consolidation\Config\ConfigInterface;
+use EclipseGc\CommonConsole\Event\Traits\PlatformArgumentInjectionTrait;
 use EclipseGc\CommonConsole\Platform\PlatformBase;
 use EclipseGc\CommonConsole\Platform\PlatformSitesInterface;
 use EclipseGc\CommonConsole\Platform\PlatformStorage;
@@ -19,6 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -27,6 +29,8 @@ use Symfony\Component\Process\Process;
  * @package Acquia\Console\Cloud\Platform
  */
 class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface, PlatformDependencyInjectionInterface {
+
+  use PlatformArgumentInjectionTrait;
 
   const PLATFORM_NAME = "Acquia Cloud";
 
@@ -47,9 +51,30 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    */
   protected $clientFactory;
 
-  public function __construct(ConfigInterface $config, ProcessRunner $runner, PlatformStorage $storage, AcquiaCloudClientFactory $clientFactory) {
+  /**
+   * AcquiaCloudPlatform constructor.
+   *
+   * @param \Consolidation\Config\ConfigInterface $config
+   *   The configuration object.
+   * @param \EclipseGc\CommonConsole\ProcessRunner $runner
+   *   The process runner service.
+   * @param \EclipseGc\CommonConsole\Platform\PlatformStorage $storage
+   *   The platform storage service.
+   * @param \Acquia\Console\Cloud\Client\AcquiaCloudClientFactory $clientFactory
+   *   The Acquia Cloud client factory service.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+   *   The event dispatcher service.
+   */
+  public function __construct(
+    ConfigInterface $config,
+    ProcessRunner $runner,
+    PlatformStorage $storage,
+    AcquiaCloudClientFactory $clientFactory,
+    EventDispatcherInterface $dispatcher
+  ) {
     parent::__construct($config, $runner, $storage);
     $this->clientFactory = $clientFactory;
+    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -60,7 +85,8 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $config,
       $runner,
       $storage,
-      $container->get('http_client_factory.acquia_cloud')
+      $container->get('http_client_factory.acquia_cloud'),
+      $container->get('event_dispatcher')
     );
   }
 
@@ -151,7 +177,14 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    */
   public function execute(Command $command, InputInterface $input, OutputInterface $output) : void {
     $environments = new Environments($this->getAceClient());
+    $sites = $this->getPlatformSites();
+    if (!$sites) {
+      $output->writeln('<warning>No sites available. Exiting...</warning>');
+      return;
+    }
 
+    $sites = array_column($sites, 0);
+    $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $environment = $environments->get($environment_id);
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $environment->uuid));
@@ -159,7 +192,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $sshUrl = $environment->sshUrl;
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
-      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$input->__toString()} --uri $uri'");
+      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$args[$uri]->__toString()} --uri $uri'");
       $this->runner->run($process, $this, $output);
     }
   }
@@ -203,10 +236,10 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
   }
 
   /**
-   * Gets site active domain by environment id.
+   * Returns the active domain of an environment.
    *
    * @param string $env_id
-   *   Environment id.
+   *   The environment's unique identifier.
    *
    * @return string
    *   Return the domain or an empty string.
@@ -240,4 +273,3 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
   }
 
 }
-

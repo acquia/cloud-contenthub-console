@@ -72,11 +72,16 @@ trait PlatformCommandTestHelperTrait {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $dispatcher = $this->getMockBuilder(EventDispatcher::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
     return new AcquiaCloudPlatform(
       $this->parseConfigArray($platform_config),
       $process_runner,
       $platform_storage,
-      $client_factory
+      $client_factory,
+      $dispatcher
     );
   }
 
@@ -112,12 +117,17 @@ trait PlatformCommandTestHelperTrait {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $dispatcher = $this->getMockBuilder(EventDispatcher::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
     return new ACSFPlatform(
       $this->parseConfigArray($platform_config),
       $process_runner,
       $platform_storage,
       $ace_factory,
-      $acsf_factory
+      $acsf_factory,
+      $dispatcher
     );
   }
 
