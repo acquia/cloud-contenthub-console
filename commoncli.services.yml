@@ -47,3 +47,9 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
+  command.ace.cron_check:
+    class: Acquia\Console\Cloud\Command\AcquiaCloudCronCheck
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
