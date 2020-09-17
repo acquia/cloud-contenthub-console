@@ -175,16 +175,17 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
   /**
    * {@inheritdoc}
    */
-  public function execute(Command $command, InputInterface $input, OutputInterface $output) : void {
+  public function execute(Command $command, InputInterface $input, OutputInterface $output) : int {
     $environments = new Environments($this->getAceClient());
     $sites = $this->getPlatformSites();
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return;
+      return 1;
     }
 
     $sites = array_column($sites, 0);
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
+    $exit_code = 0;
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $environment = $environments->get($environment_id);
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $environment->uuid));
@@ -193,8 +194,9 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
       $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$args[$uri]->__toString()} --uri $uri'");
-      $this->runner->run($process, $this, $output);
+      $exit_code += $this->runner->run($process, $this, $output);
     }
+    return $exit_code;
   }
 
   /**

@@ -32,6 +32,16 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
     foreach ($options as $uuid => $site_data) {
       $sites[$uuid] = $site_data[0];
     }
+
+    if ($input->hasOption('all') && $input->getOption('all')) {
+      foreach ($sites as $uuid => $site) {
+        $databases = $this->getDatabasesByEnvironment($uuid);
+        $db_info = reset($databases);
+        $this->doRunCommand($uuid, $db_info->name, $input, $output);
+      }
+      return 0;
+    }
+
     $choice = new ChoiceQuestion('Please choose the site you would like to manage a database backup for:', $sites);
     $site = $helper->ask($input, $output, $choice);
 

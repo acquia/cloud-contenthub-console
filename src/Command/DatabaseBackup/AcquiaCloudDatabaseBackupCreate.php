@@ -30,6 +30,7 @@ class AcquiaCloudDatabaseBackupCreate extends AcquiaCloudDatabaseBackupBase {
   protected function configure() {
     $this->setDescription('Create database backups.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
+    $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Perform backups for all sites in the platform.');
     $this->setAliases(['ace-dbcr']);
   }
 
@@ -37,12 +38,17 @@ class AcquiaCloudDatabaseBackupCreate extends AcquiaCloudDatabaseBackupBase {
    * {@inheritdoc}
    */
   protected function doRunCommand(string $env_id, string $db, InputInterface $input, OutputInterface $output): int {
-    $helper = $this->getHelper('question');
-    $confirm = new ConfirmationQuestion('Database backup initiation. Would you like to proceed?');
-    $yes = $helper->ask($input, $output, $confirm);
-    if (!$yes) {
-      $output->writeln('Backup process terminated by user.');
-      return 1;
+    if ($input->hasOption('all') && $input->getOption('all')) {
+      $output->writeln(sprintf('Initiating backup for database = "%s"...', $db));
+    }
+    else {
+      $helper = $this->getHelper('question');
+      $confirm = new ConfirmationQuestion(sprintf('Database backup initiation for db = "%s". Would you like to proceed? (Y/N): ', $db));
+      $yes = $helper->ask($input, $output, $confirm);
+      if (!$yes) {
+        $output->writeln('Backup process terminated by user.');
+        return 1;
+      }
     }
 
     $resp = $this->initiateBackup($env_id, $db);

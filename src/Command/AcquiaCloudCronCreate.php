@@ -45,7 +45,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
 
     $helper = $this->getHelper('question');
 
-    $question = new Question('How many queue-runners would you like to create for each queue type per site? ', 1);
+    $question = new Question('How many queue-runners would you like to create for each queue type per site (1)? ', 1);
     $question->setValidator(function ($answer) {
       $answer = intval($answer);
       if ($answer === 0) {
@@ -61,7 +61,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
     $job_count = $helper->ask($input, $output, $question);
     $output->writeln("<warning>You are about to create {$job_count} cron per site!</warning>");
 
-    $confirm_question = new ConfirmationQuestion('Do you want to proceed?');
+    $confirm_question = new ConfirmationQuestion('Do you want to proceed (y/n)? ');
     if (!$helper->ask($input, $output, $confirm_question)) {
       $output->writeln('<comment>Terminated by user.</comment>');
       return 0;
