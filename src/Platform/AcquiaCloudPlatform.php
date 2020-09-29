@@ -193,7 +193,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $sshUrl = $environment->sshUrl;
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
-      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$args[$uri]->__toString()} --uri $uri'");
+      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
       $exit_code += $this->runner->run($process, $this, $output);
     }
     return $exit_code;
