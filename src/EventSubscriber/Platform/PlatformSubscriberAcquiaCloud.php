@@ -80,6 +80,17 @@ class PlatformSubscriberAcquiaCloud implements EventSubscriberInterface {
     if ($platform->get(PlatformInterface::PLATFORM_TYPE_KEY) !== AcquiaCloudPlatform::getPlatformId()) {
       return;
     }
+
+    $this->setEnvironmentDetails($platform);
+  }
+
+  /**
+   * Sets environment details into configuration
+   *
+   * @param \EclipseGc\CommonConsole\PlatformInterface $platform
+   *   Platform instance.
+   */
+  public function setEnvironmentDetails(PlatformInterface $platform): void {
     $client = $this->factory->fromCredentials($platform->get(AcquiaCloudPlatform::ACE_API_KEY), $platform->get(AcquiaCloudPlatform::ACE_API_SECRET));
     $environment = new Environments($client);
     $environment_details = [];
@@ -93,6 +104,7 @@ class PlatformSubscriberAcquiaCloud implements EventSubscriberInterface {
       }
     }
     $platform->set(AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS, $environment_details);
+
   }
 
 }

@@ -30,7 +30,7 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
 
     $sites = [];
     foreach ($options as $uuid => $site_data) {
-      $sites[$uuid] = $site_data[0];
+      $sites[$uuid] = $site_data['uri'];
     }
 
     if ($input->hasOption('all') && $input->getOption('all')) {

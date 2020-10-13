@@ -7,6 +7,8 @@ use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use AcquiaCloudApi\Endpoints\Crons;
 use AcquiaCloudApi\Endpoints\Servers;
+use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\HelperInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -40,32 +42,8 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $output->writeln('<warning>You are about to create scheduled jobs for ACH import/export queues</warning>');
-    $output->writeln('<warning>You can check the currently available jobs with ace-cl / acsf-cl command.</warning>');
-
     $helper = $this->getHelper('question');
-
-    $question = new Question('How many queue-runners would you like to create for each queue type per site (1)? ', 1);
-    $question->setValidator(function ($answer) {
-      $answer = intval($answer);
-      if ($answer === 0) {
-        throw new \RuntimeException(
-          'Please enter a valid number which is not 0!'
-        );
-      }
-
-      return $answer;
-    });
-
-
-    $job_count = $helper->ask($input, $output, $question);
-    $output->writeln("<warning>You are about to create {$job_count} cron per site!</warning>");
-
-    $confirm_question = new ConfirmationQuestion('Do you want to proceed (y/n)? ');
-    if (!$helper->ask($input, $output, $confirm_question)) {
-      $output->writeln('<comment>Terminated by user.</comment>');
-      return 0;
-    }
+    $job_count = $this->getQueueRunnersCount($input, $output, $helper);
 
     $raw = $this->runWithMemoryOutput(ContentHubQueue::getDefaultName());
     $sites = $this->getSiteInfo();
@@ -100,6 +78,49 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
 
     return 0;
   }
+
+  /**
+   * Gets queue runners count.
+   *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   InputInterface instance.
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   OutputInterface instance.
+   * @param \Symfony\Component\Console\Helper\HelperInterface $helper
+   *   Symfony helper instance.
+   *
+   * @return int
+   *   Amount of queue runners.
+   */
+  protected function getQueueRunnersCount(InputInterface $input, OutputInterface $output, HelperInterface $helper): int {
+    $output->writeln('<warning>You are about to create scheduled jobs for ACH import/export queues</warning>');
+    $output->writeln('<warning>You can check the currently available jobs with ace-cl / acsf-cl command.</warning>');
+
+    $question = new Question('How many queue-runners would you like to create for each queue type per site (1)? ', 1);
+    $question->setValidator(function ($answer) {
+      $answer = intval($answer);
+      if ($answer === 0) {
+        throw new \RuntimeException(
+          'Please enter a valid number which is not 0!'
+        );
+      }
+
+      return $answer;
+    });
+
+
+    $job_count = $helper->ask($input, $output, $question);
+    $output->writeln("<warning>You are about to create {$job_count} cron per site!</warning>");
+
+    $confirm_question = new ConfirmationQuestion('Do you want to proceed (y/n)? ');
+    if (!$helper->ask($input, $output, $confirm_question)) {
+      $output->writeln('<comment>Terminated by user.</comment>');
+      return 0;
+    }
+
+    return $job_count;
+  }
+
 
   /**
    * Generate unique name for log file.

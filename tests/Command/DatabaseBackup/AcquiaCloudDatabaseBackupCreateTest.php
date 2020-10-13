@@ -48,11 +48,14 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
         'arguments' => [
           // Second case.
           ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
           ['post','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
           // Third case.
+          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
           ['post','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
@@ -61,11 +64,14 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
         'returns' => [
           // Second case.
           $environment_response,
+          $environment_response,
           $db_response,
+          $environment_response,
           $environment_response,
           $db_response,
           $operation_response,
           // Third case.
+          $environment_response,
           $environment_response,
           $db_response,
           $operation_response,

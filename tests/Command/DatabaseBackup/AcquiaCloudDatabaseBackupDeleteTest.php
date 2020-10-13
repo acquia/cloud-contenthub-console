@@ -37,10 +37,12 @@ class AcquiaCloudDatabaseBackupDeleteTest extends AcquiaCloudDatabaseBackupTestB
         'returns' => [
           // First case.
           $environment_response,
+          $environment_response,
           $db_response,
           $backups_response,
           $operation_response,
           // Second case.
+          $environment_response,
           $environment_response,
           $db_response,
           $backups_response,

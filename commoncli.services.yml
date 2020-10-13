@@ -9,6 +9,11 @@ services:
     arguments: ['@http_client_factory.acquia_cloud']
     tags:
       - { name: kernel.event_subscriber }
+  platform.acquia.cloud.multi_site:
+    class: Acquia\Console\Cloud\EventSubscriber\Platform\PlatformSubscriberAcquiaCloudMultiSite
+    arguments: ['@http_client_factory.acquia_cloud']
+    tags:
+      - { name: kernel.event_subscriber }
 
   #  Commands
   command.ace.database.backup.create:
@@ -47,9 +52,20 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
+  command.ace.cron_create.multi_site:
+    class: Acquia\Console\Cloud\Command\AcquiaCloudCronCreateMultiSite
+    public: true
+    arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
   command.ace.cron_check:
     class: Acquia\Console\Cloud\Command\AcquiaCloudCronCheck
     public: true
     arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+  command.ace.multi_sites:
+    class: Acquia\Console\Cloud\Command\AcquiaCloudMultiSites
+    public: true
     tags:
       - { name: common_console_command }

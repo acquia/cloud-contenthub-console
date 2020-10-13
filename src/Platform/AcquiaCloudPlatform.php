@@ -183,13 +183,17 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       return 1;
     }
 
-    $sites = array_column($sites, 0);
+    $input_uri = $input->getOption('uri');
+    $sites = array_column($sites, 'uri');
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
     $exit_code = 0;
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
-      $environment = $environments->get($environment_id);
-      $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $environment->uuid));
       $uri = $this->getActivedomain($environment_id);
+      if (isset($input_uri) && $input_uri !== $uri ) {
+        continue;
+      }
+      $environment = $environments->get($environment_id);
+      $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $uri));
       $sshUrl = $environment->sshUrl;
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
@@ -232,7 +236,9 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     }
     foreach ($environment_details as $application_id => $environment_id) {
       $environment = $environments->get($environment_id);
-      $sites[$environment->uuid] = [implode(', ', $environment->domains), static::getPlatformId()];
+      $sites[$environment->uuid] = [
+        'uri' => $this->getActiveDomain($environment_id),
+        'platform_id' => static::getPlatformId()];
     }
     return $sites;
   }
@@ -246,9 +252,10 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    * @return string
    *   Return the domain or an empty string.
    */
-  protected function getActiveDomain(string $env_id): string {
-    $client = $this->getAceClient();
-    $response = $client->request('get', "/environments/{$env_id}");
+  public function getActiveDomain(string $env_id): string {
+    $response = $this
+      ->getAceClient()
+      ->request('get', "/environments/{$env_id}");
 
     return is_array($response) ? '' : $response->active_domain;
   }

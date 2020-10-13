@@ -26,6 +26,7 @@ class AcquiaCloudDatabaseBackupListTest extends AcquiaCloudDatabaseBackupTestBas
       'create backup' => [
         'returns' => [
           $environment_response,
+          $environment_response,
           $db_response,
           $backups_response,
         ],
@@ -50,6 +51,7 @@ class AcquiaCloudDatabaseBackupListTest extends AcquiaCloudDatabaseBackupTestBas
     $arguments = [
       'create backup' => [
         'returns' => [
+          $environment_response,
           $environment_response,
           $db_response,
           []
