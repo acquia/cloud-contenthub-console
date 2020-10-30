@@ -100,7 +100,7 @@ class AcquiaCloudCronCreateMultiSite extends AcquiaCloudCronCreate {
       }
 
       if (isset($data->sites)) {
-        return $data->sites;
+        return (array) $data->sites;
       }
     }
 

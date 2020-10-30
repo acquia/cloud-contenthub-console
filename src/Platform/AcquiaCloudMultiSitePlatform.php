@@ -12,7 +12,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Process\Process;
 
 /**
@@ -108,7 +107,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       }
 
       if (isset($data->sites)) {
-        return array_intersect(array_keys(array_unique($data->sites)), $env_response->domains);
+        return array_intersect(array_keys(array_unique((array) $data->sites)), $env_response->domains);
       }
     }
 
