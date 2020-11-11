@@ -40,10 +40,10 @@ trait CommandTestHelperTrait {
    * @param array $args
    *   Command arguments.
    *
-   * @return string
-   *   The display.
+   * @return object
+   *   Command tester instance after calling execute.
    */
-  public function doRunCommand(Command $command, array $input, array $args = []): string {
+  public function doRunCommand(Command $command, array $input, array $args = []): object {
     if (!$command->getDefinition()->hasArgument('alias')) {
       $command->addArgument('alias', InputArgument::OPTIONAL, '', '');
     }
@@ -52,7 +52,7 @@ trait CommandTestHelperTrait {
     $command_tester->setInputs($input);
     $command_tester->execute($args);
 
-    return $command_tester->getDisplay();
+    return $command_tester;
   }
 
 }
