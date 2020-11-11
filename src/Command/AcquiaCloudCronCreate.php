@@ -55,15 +55,18 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
       if (!$data) {
         continue;
       }
-
       foreach ($sites as $site) {
         if ($site['active_domain'] === $data->base_url) {
-          $servers = $this->getServerInfo($site['env_uuid']);
-          if (count($servers) !== 1) {
-            $server_question = new ChoiceQuestion('Please select which server to use for running the scheduled jobs.', $servers);
-            $server_name = $helper->ask($input, $output, $server_question);
+          try {
+            $servers = $this->getServerInfo($site['env_uuid']);
+            if (count($servers) > 1) {
+              $server_question = new ChoiceQuestion('Please select which server to use for running the scheduled jobs.', $servers);
+              $server_name = $helper->ask($input, $output, $server_question);
+            }
           }
-
+          catch (\Exception $e) {
+            $servers = [];
+          }
           $data->server_id = isset($server_name) ? $servers[$server_name] : NULL;
           for ($i = 0; $i < $job_count; $i++) {
             $data->counter = $counter;

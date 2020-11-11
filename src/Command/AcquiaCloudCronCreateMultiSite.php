@@ -51,11 +51,15 @@ class AcquiaCloudCronCreateMultiSite extends AcquiaCloudCronCreate {
 
     $raw = $this->runWithMemoryOutput(ContentHubQueue::getDefaultName());
     $env_uuid = current($this->platform->get(AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS));
-
-    $servers = $this->getServerInfo($env_uuid);
-    if (count($servers) !== 1) {
-      $server_question = new ChoiceQuestion('Please select which server to use for running the scheduled jobs.', $servers);
-      $server_name = $helper->ask($input, $output, $server_question);
+    try {
+      $servers = $this->getServerInfo($env_uuid);
+      if (count($servers) > 1) {
+        $server_question = new ChoiceQuestion('Please select which server to use for running the scheduled jobs.', $servers);
+        $server_name = $helper->ask($input, $output, $server_question);
+      }
+    }
+    catch (\Exception $e) {
+      $servers = [];
     }
 
     $counter = 0;
