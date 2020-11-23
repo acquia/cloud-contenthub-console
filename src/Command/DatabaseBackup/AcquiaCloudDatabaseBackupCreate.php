@@ -46,7 +46,7 @@ class AcquiaCloudDatabaseBackupCreate extends AcquiaCloudDatabaseBackupBase {
       $confirm = new ConfirmationQuestion(sprintf('Database backup initiation for db = "%s". Would you like to proceed? (Y/N): ', $db));
       $yes = $helper->ask($input, $output, $confirm);
       if (!$yes) {
-        $output->writeln('Backup process terminated by user.');
+        $output->writeln('<warning>Backup process terminated by user.</warning>');
         return 1;
       }
     }
