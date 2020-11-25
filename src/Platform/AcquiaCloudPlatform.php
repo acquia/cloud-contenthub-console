@@ -44,6 +44,8 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
 
   public const ACE_ENVIRONMENT_DETAILS = 'acquia.cloud.environment.ids';
 
+  public const ACE_VENDOR_PATHS = 'acquia.cloud.environment.vendor_paths';
+
   /**
    * The Acquia Cloud Client Factory object.
    *
@@ -187,6 +189,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $sites = array_column($sites, 'uri');
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
     $exit_code = 0;
+    $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $uri = $this->getActivedomain($environment_id);
       if (isset($input_uri) && $input_uri !== $uri ) {
@@ -197,9 +200,10 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $sshUrl = $environment->sshUrl;
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
-      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
+      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_paths[$environment_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
       $exit_code += $this->runner->run($process, $this, $output);
     }
+
     return $exit_code;
   }
 

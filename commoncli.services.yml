@@ -6,11 +6,20 @@ services:
   #  Platforms
   platform.acquia.cloud:
     class: Acquia\Console\Cloud\EventSubscriber\Platform\PlatformSubscriberAcquiaCloud
-    arguments: ['@http_client_factory.acquia_cloud']
     tags:
       - { name: kernel.event_subscriber }
   platform.acquia.cloud.multi_site:
     class: Acquia\Console\Cloud\EventSubscriber\Platform\PlatformSubscriberAcquiaCloudMultiSite
+    arguments: ['@http_client_factory.acquia_cloud']
+    tags:
+      - { name: kernel.event_subscriber }
+  platform.config.environment_details:
+    class: Acquia\Console\Cloud\EventSubscriber\Platform\PlatformConfigEnvironmentsDetails
+    arguments: ['@http_client_factory.acquia_cloud']
+    tags:
+      - { name: kernel.event_subscriber }
+  platform.config.app_finder_cloud:
+    class: Acquia\Console\Cloud\EventSubscriber\Platform\PlatformConfigAppFinderCloud
     arguments: ['@http_client_factory.acquia_cloud']
     tags:
       - { name: kernel.event_subscriber }

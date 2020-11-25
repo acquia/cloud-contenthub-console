@@ -45,11 +45,12 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $environments = new Environments($this->getAceClient());
     $env_id = current($this->get(self::ACE_ENVIRONMENT_DETAILS));
     $environment = $environments->get($env_id);
+    $vendor_path = $this->get(self::ACE_VENDOR_PATHS);
 
     $sshUrl = $environment->sshUrl;
     [, $url] = explode('@', $sshUrl);
     [$application] = explode('.', $url);
-    $sites = $this->getPlatformMultiSites($environment, $application, $output);
+    $sites = $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
 
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
@@ -70,7 +71,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
 
     foreach ($sites as $uri) {
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $uri));
-      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application/docroot; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
+      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_path[$env_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
       $exit_code += $this->runner->run($process, $this, $output);
     }
 
@@ -86,15 +87,16 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
    *   Acquia Cloud Application name.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The OutputInterface instance.
+   * @param string $exec_path
+   *   Path to commoncli executable.
    *
    * @return array
    *  Array containing site URIs.
    */
-  public function getPlatformMultiSites(EnvironmentResponse $env_response, string $application, OutputInterface $output): array {
+  public function getPlatformMultiSites(EnvironmentResponse $env_response, string $application, OutputInterface $output, string $vendor_path): array {
     $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
 
-    $command = "./vendor/bin/commoncli ace:multi:sites";
-    $process = new Process("ssh {$env_response->sshUrl} 'cd /var/www/html/$application/docroot; $command'");
+    $process = new Process("ssh {$env_response->sshUrl} 'cd /var/www/html/$application; cd $vendor_path; ./vendor/bin/commoncli ace:multi:sites'");
     $this->runner->run($process, $this, $remote_output);
     rewind($remote_output->getStream());
     $content = stream_get_contents($remote_output->getStream());

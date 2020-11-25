@@ -5,8 +5,6 @@ namespace Acquia\Console\Cloud\EventSubscriber\Platform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use EclipseGc\CommonConsole\Event\GetPlatformTypeEvent;
 use EclipseGc\CommonConsole\Event\GetPlatformTypesEvent;
-use EclipseGc\CommonConsole\Event\PlatformWriteEvent;
-use EclipseGc\CommonConsole\PlatformInterface;
 
 /**
  * Class PlatformSubscriberAcquiaCloudMultiSite
@@ -38,18 +36,6 @@ class PlatformSubscriberAcquiaCloudMultiSite extends PlatformSubscriberAcquiaClo
       $event->addClass(AcquiaCloudMultiSitePlatform::class);
       $event->stopPropagation();;
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function onPlatformWrite(PlatformWriteEvent $event) {
-    $platform = $event->getPlatform();
-    if ($platform->get(PlatformInterface::PLATFORM_TYPE_KEY) !== AcquiaCloudMultiSitePlatform::getPlatformId()) {
-      return;
-    }
-
-    $this->setEnvironmentDetails($platform);
   }
 
 }
