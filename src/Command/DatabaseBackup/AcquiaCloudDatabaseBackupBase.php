@@ -15,6 +15,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
  */
 abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase implements PlatformCommandInterface {
 
+  use AcquiaCloudDatabaseBackupHelperTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -53,19 +55,6 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
     $db = $helper->ask($input, $output, $choice);
 
     return $this->doRunCommand($site, $db, $input, $output);
-  }
-
-  /**
-   * Make request against /environments/{environment_uuid}/databases endpoint.
-   *
-   * @param string $env_uuid
-   *   Environment uuid.
-   *
-   * @return array
-   *   Response of API call (DB info).
-   */
-  protected function getDatabasesByEnvironment(string $env_uuid) {
-    return $this->acquiaCloudClient->request('get', "/environments/$env_uuid/databases");
   }
 
   /**

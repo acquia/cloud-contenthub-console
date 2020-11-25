@@ -3,8 +3,6 @@
 namespace Acquia\Console\Cloud\Command\DatabaseBackup;
 
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use AcquiaCloudApi\Endpoints\DatabaseBackups;
-use AcquiaCloudApi\Response\BackupsResponse;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,6 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AcquiaCloudDatabaseBackupList extends AcquiaCloudDatabaseBackupBase {
 
   use PlatformCmdOutputFormatterTrait;
+  use AcquiaCloudDatabaseBackupHelperTrait;
 
   /**
    * {@inheritdoc}
@@ -38,7 +37,7 @@ class AcquiaCloudDatabaseBackupList extends AcquiaCloudDatabaseBackupBase {
    * {@inheritdoc}
    */
   protected function doRunCommand(string $env_id, string $db, InputInterface $input, OutputInterface $output): int {
-    $list = $this->listBackups($env_id, $db);
+    $list = $this->getBackupList($env_id, $db);
     if (!$list) {
       $output->writeln('No backups found.');
       return 1;
@@ -65,27 +64,6 @@ class AcquiaCloudDatabaseBackupList extends AcquiaCloudDatabaseBackupBase {
     $table->render();
 
     return 0;
-  }
-
-  /**
-   * Returns a BackupsResponse object.
-   *
-   * @param string $env_id
-   *   The environment id.
-   * @param string $db_name
-   *   The name of the database to list the backups of.
-   *
-   * @return \AcquiaCloudApi\Response\BackupsResponse|null
-   *   The response of the process.
-   */
-  protected function listBackups(string $env_id, string $db_name): ?BackupsResponse {
-    $db_backups = new DatabaseBackups($this->acquiaCloudClient);
-    $all = $db_backups->getAll($env_id, $db_name);
-    if ($all->count() < 1) {
-      return NULL;
-    }
-
-    return $all;
   }
 
 }

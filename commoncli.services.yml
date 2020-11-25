@@ -61,6 +61,18 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
+  command.ace.multisite.database.backup.list:
+    class: Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupList
+    public: true
+    arguments: [ '@event_dispatcher' ]
+    tags:
+      - { name: common_console_command }
+  command.ace.multisite.database.backup.create:
+    class: Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBackupCreate
+    public: true
+    arguments: [ '@event_dispatcher' ]
+    tags:
+      - { name: common_console_command }
   command.ace.cron_list:
     class: Acquia\Console\Cloud\Command\AcquiaCloudCronList
     public: true

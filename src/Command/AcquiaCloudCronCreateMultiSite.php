@@ -19,7 +19,7 @@ class AcquiaCloudCronCreateMultiSite extends AcquiaCloudCronCreate {
   /**
    * {@inheritdoc}
    */
-  public static $defaultName = 'ace:cron:create_multi';
+  public static $defaultName = 'ace-multi:cron:create';
 
   /**
    * {@inheritdoc}

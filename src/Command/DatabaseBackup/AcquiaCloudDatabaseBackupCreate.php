@@ -3,8 +3,6 @@
 namespace Acquia\Console\Cloud\Command\DatabaseBackup;
 
 use Acquia\Console\Cloud\Command\AceNotificationHandlerTrait;
-use AcquiaCloudApi\Endpoints\DatabaseBackups;
-use AcquiaCloudApi\Response\OperationResponse;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,6 +16,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 class AcquiaCloudDatabaseBackupCreate extends AcquiaCloudDatabaseBackupBase {
 
   use AceNotificationHandlerTrait;
+  use AcquiaCloudDatabaseBackupHelperTrait;
 
   /**
    * {@inheritdoc}
@@ -56,22 +55,6 @@ class AcquiaCloudDatabaseBackupCreate extends AcquiaCloudDatabaseBackupBase {
     $this->waitInteractive($input, $output, $resp->links->notification->href, $this->acquiaCloudClient);
 
     return 0;
-  }
-
-  /**
-   * Initiate the backup.
-   *
-   * @param string $env_id
-   *   The environment id.
-   * @param string $db_name
-   *   The name of the database to crate backup of.
-   *
-   * @return \AcquiaCloudApi\Response\OperationResponse
-   *   The response of the process.
-   */
-  protected function initiateBackup(string $env_id, string $db_name): OperationResponse {
-    $db_backups = new DatabaseBackups($this->acquiaCloudClient);
-    return $db_backups->create($env_id, $db_name);
   }
 
 }
