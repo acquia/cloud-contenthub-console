@@ -16,6 +16,18 @@ services:
       - { name: kernel.event_subscriber }
 
   #  Commands
+  command.backup.list:
+    class: Acquia\Console\Cloud\Command\Backups\AcquiaCloudBackupList
+    public: true
+    arguments: ['@config.storage']
+    tags:
+      - { name: common_console_command }
+  command.ace.backup.create:
+    class: Acquia\Console\Cloud\Command\Backups\AcquiaCloudBackupCreate
+    public: true
+    arguments: ['@event_dispatcher', '@config.storage']
+    tags:
+      - { name: common_console_command }
   command.ace.database.backup.create:
     class: Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate
     public: true

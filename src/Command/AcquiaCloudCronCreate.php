@@ -7,7 +7,6 @@ use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use AcquiaCloudApi\Endpoints\Crons;
 use AcquiaCloudApi\Endpoints\Servers;
-use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\HelperInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
