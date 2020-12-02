@@ -93,4 +93,44 @@ trait AcquiaCloudDatabaseBackupHelperTrait {
     return $this->acquiaCloudClient->request('get', "/environments/$env_uuid/databases");
   }
 
+  /**
+   * Restores a database from the given backup.
+   *
+   * @param string $env_id
+   *   The environments uuid.
+   * @param string $db_name
+   *   The database name.
+   * @param int $backup_id
+   *   The backup id.
+   *
+   * @return \AcquiaCloudApi\Response\OperationResponse
+   *   The response object.
+   */
+  protected function restore(string $env_id, string $db_name, int $backup_id): OperationResponse {
+    $db_backups = new DatabaseBackups($this->acquiaCloudClient);
+    return $db_backups->restore($env_id, $db_name, $backup_id);
+  }
+
+  /**
+   * Deletes a database backup in an environment.
+   *
+   * @param string $env_id
+   *   The environment's uuid.
+   * @param string $db
+   *   Database name.
+   * @param int $backup_id
+   *   The backup id.
+   *
+   * @return \AcquiaCloudApi\Response\OperationResponse
+   *   The response object.
+   */
+  public function delete(string $env_id, string $db, int $backup_id): OperationResponse {
+    return new OperationResponse(
+      $this->acquiaCloudClient->request(
+        'delete',
+        "/environments/${env_id}/databases/${db}/backups/${backup_id}"
+      )
+    );
+  }
+
 }

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
  *
  * @package Acquia\Console\Cloud\Command\DatabaseBackup
  */
-class AcquiaCloudDatabaseBackupRestore extends AcquiaCloudDatabaseBackupBase {
+class AcquiaCloudMultisiteDatabaseBackupRestore extends AcquiaCloudMultisiteDatabaseBackupBase {
 
   use AceNotificationHandlerTrait;
   use AcquiaCloudDatabaseBackupHelperTrait;
@@ -21,21 +21,22 @@ class AcquiaCloudDatabaseBackupRestore extends AcquiaCloudDatabaseBackupBase {
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'ace:database:backup:restore';
+  protected static $defaultName = 'ace-multi:database:backup:restore';
 
   /**
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restore database backups.');
+    $this->setDescription('Restore database backups for multisite environment.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
-    $this->setAliases(['ace-dbres']);
+    $this->setAliases(['ace-dbresm']);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function doRunCommand(string $env_id, string $db, InputInterface $input, OutputInterface $output): int {
+  protected function doRunCommand(string $env_id, array $databases, InputInterface $input, OutputInterface $output): int {
+    $db = current($databases);
     $list = $this->listBackups($env_id, $db, $this->acquiaCloudClient);
     if (!$list) {
       return 1;

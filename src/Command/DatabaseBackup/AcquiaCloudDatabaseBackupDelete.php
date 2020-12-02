@@ -3,7 +3,6 @@
 namespace Acquia\Console\Cloud\Command\DatabaseBackup;
 
 use Acquia\Console\Cloud\Command\AceNotificationHandlerTrait;
-use AcquiaCloudApi\Response\OperationResponse;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -50,28 +49,6 @@ class AcquiaCloudDatabaseBackupDelete extends AcquiaCloudDatabaseBackupBase {
     $this->waitInteractive($input, $output, $resp->links->notification->href, $this->acquiaCloudClient);
 
     return 0;
-  }
-
-  /**
-   * Deletes a database backup in an environment.
-   *
-   * @param string $env_id
-   *   The environment's uuid.
-   * @param string $db
-   *   Database name.
-   * @param int $backup_id
-   *   The backup id.
-   *
-   * @return \AcquiaCloudApi\Response\OperationResponse
-   *   The response object.
-   */
-  public function delete(string $env_id, string $db, int $backup_id): OperationResponse {
-    return new OperationResponse(
-      $this->acquiaCloudClient->request(
-        'delete',
-        "/environments/${env_id}/databases/${db}/backups/${backup_id}"
-      )
-    );
   }
 
 }

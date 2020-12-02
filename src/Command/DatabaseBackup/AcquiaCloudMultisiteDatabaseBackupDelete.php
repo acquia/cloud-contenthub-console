@@ -9,11 +9,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 /**
- * Class AcquiaCloudDatabaseBackupRestore.
+ * Class AcquiaCloudDatabaseBackupDelete.
  *
  * @package Acquia\Console\Cloud\Command\DatabaseBackup
  */
-class AcquiaCloudDatabaseBackupRestore extends AcquiaCloudDatabaseBackupBase {
+class AcquiaCloudMultisiteDatabaseBackupDelete extends AcquiaCloudMultisiteDatabaseBackupBase {
 
   use AceNotificationHandlerTrait;
   use AcquiaCloudDatabaseBackupHelperTrait;
@@ -21,30 +21,31 @@ class AcquiaCloudDatabaseBackupRestore extends AcquiaCloudDatabaseBackupBase {
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'ace:database:backup:restore';
+  protected static $defaultName = 'ace-multi:database:backup:delete';
 
   /**
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restore database backups.');
+    $this->setDescription('Delete database backups for multisite environment.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
-    $this->setAliases(['ace-dbres']);
+    $this->setAliases(['ace-dbdelm']);
   }
-
+  
   /**
    * {@inheritdoc}
    */
-  protected function doRunCommand(string $env_id, string $db, InputInterface $input, OutputInterface $output): int {
+  protected function doRunCommand(string $env_id, array $databases, InputInterface $input, OutputInterface $output): int {
+    $db = current($databases);
     $list = $this->listBackups($env_id, $db, $this->acquiaCloudClient);
     if (!$list) {
       return 1;
     }
 
-    $choice = new ChoiceQuestion('Choose a backup:', $list);
+    $choice = new ChoiceQuestion('Choose a backup to delete:', $list);
     $backup = $this->getHelper('question')->ask($input, $output, $choice);
 
-    $resp = $this->restore($env_id, $db, $list[$backup]);
+    $resp = $this->delete($env_id, $db, $list[$backup]);
     $output->writeln("<info>{$resp->message}</info>");
     $this->waitInteractive($input, $output, $resp->links->notification->href, $this->acquiaCloudClient);
 
