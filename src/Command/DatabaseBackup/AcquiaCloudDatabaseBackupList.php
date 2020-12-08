@@ -27,7 +27,7 @@ class AcquiaCloudDatabaseBackupList extends AcquiaCloudDatabaseBackupBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('List database backups.');
+    $this->setDescription('Lists database backups.');
     $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Perform backup operation for all sites in the platform.');
     $this->addOption('silent', 's', InputOption::VALUE_NONE, 'Returns list, but does not send it to the output.');
     $this->setAliases(['ace-dbl']);

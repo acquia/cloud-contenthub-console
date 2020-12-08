@@ -33,7 +33,7 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   public function configure() {
-    $this->setDescription('Create cron jobs for queues.');
+    $this->setDescription('Creates Scheduled Jobs for Acquia Content Hub Export/Import queues.');
     $this->setAliases(['ace-cc']);
   }
 

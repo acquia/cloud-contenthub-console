@@ -26,7 +26,7 @@ class AcquiaCloudCronCheck extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Checks for scheduled jobs which are running Content Hub queues.');
+    $this->setDescription('Checks for Scheduled Jobs which are running Content Hub queues.');
     $this->setAliases(['ace-cch']);
     $this->addOption('fix', 'f', InputOption::VALUE_NONE, 'Disable scheduled jobs which are running Content Hub queues.');
   }

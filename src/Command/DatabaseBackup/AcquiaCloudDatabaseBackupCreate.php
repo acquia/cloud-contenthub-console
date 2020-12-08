@@ -27,7 +27,7 @@ class AcquiaCloudDatabaseBackupCreate extends AcquiaCloudDatabaseBackupBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Create database backups.');
+    $this->setDescription('Creates database backups.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
     $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Perform backups for all sites in the platform.');
     $this->setAliases(['ace-dbcr']);

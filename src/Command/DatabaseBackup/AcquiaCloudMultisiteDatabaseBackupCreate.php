@@ -27,7 +27,7 @@ class AcquiaCloudMultisiteDatabaseBackupCreate extends AcquiaCloudMultisiteDatab
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Create database backups for multisite environment.');
+    $this->setDescription('Creates database backups for ACE Multi-site environments.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
     $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Perform backups for all sites in the multisite platform.');
     $this->setAliases(['ace-dbcrm']);

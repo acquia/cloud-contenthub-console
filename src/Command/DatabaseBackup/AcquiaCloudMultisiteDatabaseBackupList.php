@@ -25,7 +25,7 @@ class AcquiaCloudMultisiteDatabaseBackupList extends AcquiaCloudMultisiteDatabas
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('List database backups for multisite environment.');
+    $this->setDescription('Lists database backups for ACE Multi-site environments.');
     $this->addOption('all', 'a', InputOption::VALUE_NONE, 'List backups for all databases in the multisite platform.');
     $this->setAliases(['ace-dblm']);
   }

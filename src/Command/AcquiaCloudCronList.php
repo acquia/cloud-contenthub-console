@@ -25,7 +25,7 @@ class AcquiaCloudCronList extends AcquiaCloudCommandBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('List scheduled jobs');
+    $this->setDescription('Lists Scheduled Jobs.');
     $this->setAliases(['ace-cl']);
   }
 

@@ -27,7 +27,7 @@ class AcquiaCloudDatabaseBackupRestore extends AcquiaCloudDatabaseBackupBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restore database backups.');
+    $this->setDescription('Restores database backups.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
     $this->setAliases(['ace-dbres']);
   }

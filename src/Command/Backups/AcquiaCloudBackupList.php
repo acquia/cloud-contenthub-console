@@ -56,7 +56,7 @@ class AcquiaCloudBackupList extends Command {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('List configs of service snapshots and database backups.');
+    $this->setDescription('List available backup bundles of Content Hub Service snapshots and database site backups.');
     $this->setAliases(['bl']);
   }
 

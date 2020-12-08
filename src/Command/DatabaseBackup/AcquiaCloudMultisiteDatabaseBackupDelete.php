@@ -27,7 +27,7 @@ class AcquiaCloudMultisiteDatabaseBackupDelete extends AcquiaCloudMultisiteDatab
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Delete database backups for multisite environment.');
+    $this->setDescription('Deletes database backups for ACE Multi-site environments.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
     $this->setAliases(['ace-dbdelm']);
   }

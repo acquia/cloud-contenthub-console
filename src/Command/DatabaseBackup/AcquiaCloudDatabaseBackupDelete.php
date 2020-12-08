@@ -27,7 +27,7 @@ class AcquiaCloudDatabaseBackupDelete extends AcquiaCloudDatabaseBackupBase {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Delete database backups.');
+    $this->setDescription('Deletes database backups.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
     $this->setAliases(['ace-dbdel']);
   }
