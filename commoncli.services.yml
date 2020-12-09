@@ -23,6 +23,11 @@ services:
     arguments: ['@http_client_factory.acquia_cloud']
     tags:
       - { name: kernel.event_subscriber }
+  platform.config.ace.site_protocol:
+    class: Acquia\Console\Cloud\EventSubscriber\Platform\PlatformConfigHttpProtocol
+    arguments: ['@http_client_factory.acquia_cloud']
+    tags:
+      - { name: kernel.event_subscriber }
 
   #  Commands
   command.backup.list:

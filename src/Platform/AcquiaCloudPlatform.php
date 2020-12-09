@@ -46,6 +46,8 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
 
   public const ACE_VENDOR_PATHS = 'acquia.cloud.environment.vendor_paths';
 
+  public const ACE_SITE_HTTP_PROTOCOL = 'acquia.cloud.environment.sites';
+
   /**
    * The Acquia Cloud Client Factory object.
    *
@@ -261,7 +263,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       ->getAceClient()
       ->request('get', "/environments/{$env_id}");
 
-    return is_array($response) ? '' : $response->active_domain;
+    return is_array($response) ? '' : $this->prefixDomain($response->active_domain, $env_id);
   }
 
   /**
@@ -277,12 +279,29 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $response = $client->request('get', "/environments/{$environment_id}");
       $domains[] = [
-        'active_domain' => $response->active_domain,
+        'active_domain' => $this->prefixDomain($response->active_domain, $environment_id),
         'env_uuid' => $environment_id,
       ];
     }
 
     return $domains;
+  }
+
+  /**
+   * Prefix uris with http protocol.
+   *
+   * @param string $domain
+   *   Plain domain.
+   * @param string $env_id
+   *   Environment id.
+   *
+   * @return string
+   *   Uri with http:// or https:// prefix.
+   */
+  public function prefixDomain(string $domain, string $env_id): string {
+    $http_conf = $this->get(self::ACE_SITE_HTTP_PROTOCOL);
+    $prefix = isset($http_conf[$env_id]) ? $http_conf[$env_id] : 'https://';
+    return $prefix . $domain;
   }
 
 }

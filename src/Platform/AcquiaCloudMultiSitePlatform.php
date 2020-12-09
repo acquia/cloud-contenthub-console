@@ -51,7 +51,6 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     [, $url] = explode('@', $sshUrl);
     [$application] = explode('.', $url);
     $sites = $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
-
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
       return 1;
@@ -87,8 +86,8 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
    *   Acquia Cloud Application name.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   The OutputInterface instance.
-   * @param string $exec_path
-   *   Path to commoncli executable.
+   * @param string $vendor_path
+   *   Path to vendor dir.
    *
    * @return array
    *  Array containing site URIs.
@@ -109,11 +108,31 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       }
 
       if (isset($data->sites)) {
-        return array_intersect(array_keys(array_unique((array) $data->sites)), $env_response->domains);
+        $sites = array_intersect(array_flip(array_unique((array) $data->sites)), $env_response->domains);
       }
     }
 
-    return [];
+    if (empty($sites)) {
+      return [];
+    }
+
+    return $this->prefixDomains($sites);
+  }
+
+  /**
+   * @param array $sites
+   *   Array containing URI's where key is multi site directory name.
+   *
+   * @return array
+   *   Array containing site URI's prefixed with HTTP protocol.
+   */
+  protected function prefixDomains(array $sites) {
+    $prefix = $this->get(AcquiaCloudPlatform::ACE_SITE_HTTP_PROTOCOL);
+    array_walk($sites, function (&$item, $key) use (&$prefix) {
+      $item = $prefix[$key] . $item;
+    });
+
+    return $sites;
   }
 
 }
