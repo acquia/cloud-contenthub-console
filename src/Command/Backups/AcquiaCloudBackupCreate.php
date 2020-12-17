@@ -5,8 +5,8 @@ namespace Acquia\Console\Cloud\Command\Backups;
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupList;
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubCreateSnapshot;
 use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
@@ -24,7 +24,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
 
   use PlatformCmdOutputFormatterTrait;
-  use PlatformCommandExecutionTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * Parts of the directory path pointing to configuration files.
@@ -62,15 +68,18 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
-   * @param \EclipseGc\CommonConsole\Config\ConfigStorage $configStorage
+   * @param \EclipseGc\CommonConsole\Config\ConfigStorage $config_storage
    *   Config storage.
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
    * @param string|NULL $name
    *   Command name.
    */
-  public function __construct(EventDispatcherInterface $event_dispatcher, ConfigStorage $configStorage, string $name = NULL) {
+  public function __construct(EventDispatcherInterface $event_dispatcher, ConfigStorage $config_storage, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
     parent::__construct($event_dispatcher, $name);
 
-    $this->storage = $configStorage;
+    $this->storage = $config_storage;
+    $this->platformCommandExecutioner = $platform_command_executioner;
   }
 
   /**
@@ -190,7 +199,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       '--silent' => true,
     ];
 
-    $raw = $this->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupList::getDefaultName(), $platform, $cmd_input);
+    $raw = $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupList::getDefaultName(), $platform, $cmd_input);
 
     $db_backup_list = [];
     $lines = explode(PHP_EOL, trim($raw));
@@ -229,7 +238,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
       '--wait' => true,
     ];
 
-    return $this->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupCreate::getDefaultName(), $platform, $cmd_input);
+    return $this->platformCommandExecutioner->runLocallyWithMemoryOutput(AcquiaCloudDatabaseBackupCreate::getDefaultName(), $platform, $cmd_input);
   }
 
   /**
@@ -246,7 +255,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   protected function runSnapshotCreateCommand(OutputInterface $output): array {
     $sites = $this->getPlatformSites('source');
     $site_info = reset($sites);
-    $raw = $this->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), [
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $this->getPlatform('source'), [
         '--uri' => $site_info['uri'],
     ]);
 

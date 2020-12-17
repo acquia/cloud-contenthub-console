@@ -49,7 +49,7 @@ class AcquiaCloudCronCreateMultiSite extends AcquiaCloudCronCreate {
       return 1;
     }
 
-    $raw = $this->runWithMemoryOutput(ContentHubQueue::getDefaultName());
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubQueue::getDefaultName(), $this->getPlatform('source'));
     $env_uuid = current($this->platform->get(AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS));
     try {
       $servers = $this->getServerInfo($env_uuid);
@@ -94,7 +94,7 @@ class AcquiaCloudCronCreateMultiSite extends AcquiaCloudCronCreate {
    *   Array containing site URIs.
    */
   protected function getMultiSiteInfo(OutputInterface $output): array {
-    $raw = $this->runWithMemoryOutput(AcquiaCloudMultiSites::getDefaultName());
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(AcquiaCloudMultiSites::getDefaultName(), $this->getPlatform('source'));
 
     $lines = explode(PHP_EOL, trim($raw));
     foreach ($lines as $line) {

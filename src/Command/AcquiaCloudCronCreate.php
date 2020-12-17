@@ -2,9 +2,9 @@
 
 namespace Acquia\Console\Cloud\Command;
 
+use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\ContentHubQueue;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCommandExecutionTrait;
 use AcquiaCloudApi\Endpoints\Crons;
 use AcquiaCloudApi\Endpoints\Servers;
 use Symfony\Component\Console\Helper\HelperInterface;
@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class AcquiaCloudCronCreate.
@@ -21,8 +22,14 @@ use Symfony\Component\Console\Question\Question;
  */
 class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
 
-  use PlatformCommandExecutionTrait;
   use PlatformCmdOutputFormatterTrait;
+
+  /**
+   * The platform command executioner.
+   *
+   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   */
+  protected $platformCommandExecutioner;
 
   /**
    * {@inheritdoc}
@@ -38,13 +45,28 @@ class AcquiaCloudCronCreate extends AcquiaCloudCommandBase {
   }
 
   /**
+   * AcquiaCloudCronCreate constructor.
+   *
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher.
+   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   *   The platform command executioner.
+   * @param string|NULL $name
+   *   Command name.
+   */
+  public function __construct(EventDispatcherInterface $event_dispatcher, PlatformCommandExecutioner $platform_command_executioner, string $name = NULL) {
+    parent::__construct($event_dispatcher, $name);
+    $this->platformCommandExecutioner = $platform_command_executioner;
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $helper = $this->getHelper('question');
     $job_count = $this->getQueueRunnersCount($input, $output, $helper);
 
-    $raw = $this->runWithMemoryOutput(ContentHubQueue::getDefaultName());
+    $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubQueue::getDefaultName(), $this->getPlatform('source'));
     $sites = $this->getSiteInfo();
 
     $counter = 0;
