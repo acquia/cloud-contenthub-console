@@ -6,9 +6,12 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
 use Acquia\Console\Cloud\Tests\Command\PlatformCommandTestHelperTrait;
 use Acquia\Console\Cloud\Tests\TestFixtureHelperTrait;
+use AcquiaCloudApi\Connector\Client;
 use EclipseGc\CommonConsole\PlatformInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 
 /**
  * Class AcquiaCloudDatabaseBackupTestBase.
@@ -54,18 +57,19 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
    * {@inheritdoc}
    */
   public function getPlatform(array $args = []): PlatformInterface {
-    $client_mock_callback = function (MockObject $client) use ($args) {
+    $client_mock_callback = function (ObjectProphecy $client) use ($args) {
       foreach ($args as $arg) {
         if (empty($arg['returns'])) {
           continue;
         }
         if (!empty($arg['arguments'])) {
-          $client->method('request')
-            ->withConsecutive(...$arg['arguments'])
-            ->willReturnOnConsecutiveCalls(...$arg['returns']);
+          $client->request(Argument::any(), Argument::any())
+            ->shouldBeCalled()
+            ->willReturn(...$arg['returns']);
         } else {
-          $client->method('request')
-            ->willReturnOnConsecutiveCalls(...$arg['returns']);
+          $client->request(Argument::any(), Argument::any())
+            ->shouldBeCalled()
+            ->willReturn(...$arg['returns']);
         }
       }
     };
