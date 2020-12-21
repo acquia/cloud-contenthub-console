@@ -78,6 +78,25 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
   }
 
   /**
+   * Obtains the list of Sites in this Acquia Cloud Multi-site Platform.
+   *
+   * @return array
+   *   An array of all sites urls in this Multi-site Platform keyed by directory.
+   */
+  public function getMultiSites(): array {
+    $output = new StreamOutput(fopen('php://memory', 'r+', false));
+    $environments = new Environments($this->getAceClient());
+    $env_id = current($this->get(self::ACE_ENVIRONMENT_DETAILS));
+    $environment = $environments->get($env_id);
+    $vendor_path = $this->get(self::ACE_VENDOR_PATHS);
+
+    $sshUrl = $environment->sshUrl;
+    [, $url] = explode('@', $sshUrl);
+    [$application] = explode('.', $url);
+    return $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
+  }
+
+  /**
    * Gets site URIs from sites.php on the given platform.
    *
    * @param \AcquiaCloudApi\Response\EnvironmentResponse $env_response

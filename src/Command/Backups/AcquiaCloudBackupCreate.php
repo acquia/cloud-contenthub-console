@@ -193,7 +193,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *
    * @throws \Exception
    */
-  protected function runBackupListCommand(PlatformInterface $platform, OutputInterface $output) {
+  protected function runBackupListCommand(PlatformInterface $platform, OutputInterface $output): array {
     $cmd_input = [
       '--all' => true,
       '--silent' => true,
@@ -253,10 +253,8 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    * @throws \Exception
    */
   protected function runSnapshotCreateCommand(OutputInterface $output): array {
-    $sites = $this->getPlatformSites('source');
-    $site_info = reset($sites);
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $this->getPlatform('source'), [
-        '--uri' => $site_info['uri'],
+        '--uri' => $this->getUri(),
     ]);
 
     $exit_code = $raw->getReturnCode();
@@ -281,6 +279,18 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     }
 
     return $info;
+  }
+
+  /**
+   * Gets one of the site URI from platform.
+   *
+   * @return string
+   *   Returns URI.
+   */
+  protected function getUri(): string {
+    $sites = $this->getPlatformSites('source');
+    $site_info = reset($sites);
+    return $site_info['uri'];
   }
 
 }
