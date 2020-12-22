@@ -271,7 +271,6 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
         continue;
       }
 
-
       $info = [
         'snapshot_id' => $data->snapshot_id,
         'module_version' => $data->module_version,

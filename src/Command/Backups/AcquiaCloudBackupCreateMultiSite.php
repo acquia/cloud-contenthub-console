@@ -31,6 +31,14 @@ class AcquiaCloudBackupCreateMultiSite extends AcquiaCloudBackupCreate {
   /**
    * {@inheritdoc}
    */
+  protected function configure() {
+    $this->setDescription('Creates a snapshot of Acquia Content Hub Service and database backups for all sites within ACE Multi-site environment.');
+    $this->setAliases(['ace-bcm']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
     $output->writeln('<info>Starting database backup creation.</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
