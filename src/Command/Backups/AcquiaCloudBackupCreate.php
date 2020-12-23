@@ -4,6 +4,7 @@ namespace Acquia\Console\Cloud\Command\Backups;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
+use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupHelperTrait;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupList;
 use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
@@ -24,6 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
 
   use PlatformCmdOutputFormatterTrait;
+  use AcquiaCloudDatabaseBackupHelperTrait;
 
   /**
    * The platform command executioner.
@@ -121,14 +123,23 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
         $output->writeln('<warning>Cannot find the recently created backup.</warning>');
         return 1;
       }
-      $output->writeln('<info>Database backups are successfully created! Starting ACH service snapshot creation!</info>');
-
-      $snapshot = $this->runSnapshotCreateCommand($output);
-      if (empty($snapshot)) {
-        $output->writeln('<warning>Cannot create service snapshot. Check your content hub service credentials and try again.</warning>');
+      $output->writeln('<info>Database backups are successfully created! Starting Content Hub service snapshot creation!</info>');
+      // In case there is an exception while creating the snapshot, database backup needs to be deleted.
+      $snapshot_failed = TRUE;
+      try {
+        $snapshot = $this->runSnapshotCreateCommand($output);
+        $snapshot_failed = empty($snapshot) ? TRUE : FALSE;
+      } catch (\Exception $exception) {
+        $output->writeln("<error>{$exception->getMessage()}</error>");
+      }
+      if ($snapshot_failed) {
+        $this->deleteDatabaseBackups($backups);
+        $output->writeln('<warning>Cannot create Content Hub service snapshot. Please check your Content Hub service credentials and try again.</warning>');
+        $output->writeln('<warning>The previously created database backups are being deleted because the service snapshot creation failed.</warning>');
         return 2;
       }
-      $output->writeln("<info>Snapshot is successfully created. Current ACH version is {$snapshot['module_version']}.x .</info>");
+      $output->writeln("<info>Content Hub Service Snapshot is successfully created. Current Content Hub version is {$snapshot['module_version']}.x .</info>");
+
     } catch (\Exception $exception) {
       $output->writeln("<error>{$exception->getMessage()}</error>");
       return 3;
@@ -155,7 +166,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   }
 
   /**
-   * Returns info about newly created backups.
+   * Returns an array of newly created backups.
    *
    * @param \EclipseGc\CommonConsole\PlatformInterface $platform
    *   Platform instance.
@@ -167,7 +178,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    * @throws \Exception
    */
   protected function getBackupId(PlatformInterface $platform, OutputInterface $output): array {
-    $output->writeln('<info>Starts creating the database backups.</info>');
+    $output->writeln('<info>Starting the creation of database backups for all sites in the platform...</info>');
     $list_before = $this->runBackupListCommand($platform, $output);
     $raw = $this->runBackupCreateCommand($platform);
 
@@ -259,7 +270,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
 
     $exit_code = $raw->getReturnCode();
     if ($exit_code !== 0) {
-      throw new \Exception("Cannot create ACH service snapshot. Exit code: $exit_code");
+      throw new \Exception("Cannot create Content Hub service snapshot. Exit code: $exit_code");
     }
 
     $info = [];
@@ -278,6 +289,18 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
     }
 
     return $info;
+  }
+
+  /**
+   * Deletes database backups in Acquia Cloud.
+   *
+   * @param array $backups
+   *   The database backup list.
+   */
+  protected function deleteDatabaseBackups(array $backups) {
+    foreach ($backups as $backup_id => $data) {
+      $this->delete($data['environment_id'], $data['database_name'], $backup_id);
+    }
   }
 
   /**
