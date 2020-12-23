@@ -7,7 +7,6 @@ use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudMultisiteDatabaseBack
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use EclipseGc\CommonConsole\PlatformInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\StreamOutput;
 
 /**
  * Class AcquiaCloudBackupCreateMultiSite.

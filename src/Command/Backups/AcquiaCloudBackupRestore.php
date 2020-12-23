@@ -84,7 +84,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln('<warning>We are about to restore backups of all databases in this platform and a snapshot of the subscription.</warning>');
 
-    $sites = $this->getPlatformSites('source');
+    $sites = $this->getPlatformSitesForRestore();
     if (empty($sites)) {
       $output->writeln('<Error>There are no sites in this platform.</Error>');
       return 1;
@@ -103,6 +103,14 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
 
     try {
       $config_to_restore = $this->storage->load($answer, $this->config_dir);
+      $uri = $this->getUri($sites);
+      $output->writeln('<info>Starting Acquia Content Hub service restoration.</info>');
+      $exit_code = $this->restoreSnapshot($config_to_restore->get('backups.ach_snapshot'), $this->platform, $uri);
+      if ($exit_code !== 0) {
+        $output->writeln(sprintf('<error>Acquia Content Hub service restoration failed with exit code: %s.</error>', $exit_code));
+        return $exit_code;
+      }
+      $output->writeln('<info>Acquia Content Hub service restoration is completed successfully.</info>');
       $output->writeln('<info>Database backup restoration started. It can take several minutes to complete.</info>');
       $exit = $this->restoreDatabaseBackups($this->platform, $config_to_restore->get('backups.database'));
     } catch (\Exception $exception) {
@@ -111,18 +119,11 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
     }
 
     if ($exit !== 0) {
-      $output->writeln(sprintf('<error>Backup restoration command returns with exit code: %s</error>', $exit));
+      $output->writeln(sprintf('<error>Backup restoration command failed with exit code: %s.</error>', $exit));
       return $exit;
     }
 
-    $site_info = reset($sites);
-    $exit = $this->restoreSnapshot($config_to_restore->get('backups.ach_snapshot'), $this->platform, $site_info['uri']);
-    if ($exit !== 0) {
-      $output->writeln(sprintf('<error>ACH service restoration command returns with exit code: %s</error>', $exit));
-      return $exit;
-    }
-
-    $output->writeln('<info>ACH service and database backup restoration have finished successfully!</info>');
+    $output->writeln('<info>Acquia Content Hub service and site\'s database backups have been restored successfully!</info>');
     return 0;
   }
 
@@ -177,6 +178,28 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
       ->executioner
       ->runWithMemoryOutput(ContentHubRestoreSnapshotHelper::getDefaultName(), $plaform, ['--name' => $snapshot_name, '--uri' => $uri]);
     return $raw->getReturnCode();
+  }
+
+  /**
+   * Helper function to get sites on the platform.
+   *
+   * @return array
+   */
+  protected function getPlatformSitesForRestore(): array {
+    return $this->getPlatformSites('source');
+  }
+
+  /**
+   * Gets one of the site URI from platform.
+   *
+   * @param array $sites
+   *  Array of sites in the platform.
+   *
+   * @return string
+   */
+  protected function getUri(array $sites): string {
+    $site_info = reset($sites);
+    return $site_info['uri'];
   }
 
 }

@@ -7,6 +7,7 @@ use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupHelperT
 use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use AcquiaCloudApi\Response\OperationResponse;
+use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,8 +31,17 @@ class AcquiaCloudDbBackupRestoreHelper extends AcquiaCloudCommandBase{
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restore database backups.')
-      ->addOption('backups', 'bid', InputOption::VALUE_REQUIRED, 'Database backups with info.');
+    $this
+      ->setDescription('Restore database backups.')
+      ->setHidden(TRUE)
+      ->addOption('backups', 'bid', InputOption::VALUE_REQUIRED, 'Database backups array of backup_id\'s keyed by site_id\'s.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getExpectedPlatformOptions(): array {
+    return ['source' => PlatformCommandInterface::ANY_PLATFORM];
   }
 
   /**
