@@ -8,7 +8,6 @@ use Acquia\Console\Acsf\Platform\ACSFPlatform;
 use Acquia\Console\Cloud\Client\AcquiaCloudClientFactory;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use AcquiaCloudApi\Connector\Client;
-use AcquiaCloudApi\Connector\ConnectorInterface;
 use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\CommonConsoleEvents;
 use EclipseGc\CommonConsole\EventSubscriber\AddPlatform\AnyPlatform;

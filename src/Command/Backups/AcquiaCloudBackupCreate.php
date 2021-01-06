@@ -265,7 +265,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    */
   protected function runSnapshotCreateCommand(OutputInterface $output): array {
     $raw = $this->platformCommandExecutioner->runWithMemoryOutput(ContentHubCreateSnapshot::getDefaultName(), $this->getPlatform('source'), [
-        '--uri' => $this->getUri(),
+      '--uri' => $this->getUri(),
     ]);
 
     $exit_code = $raw->getReturnCode();
