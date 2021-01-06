@@ -60,6 +60,18 @@ services:
     arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
     tags:
       - { name: common_console_command }
+  command.ace.backup.delete:
+    class: Acquia\Console\Cloud\Command\Backups\AcquiaCloudBackupDelete
+    public: true
+    arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
+    tags:
+      - { name: common_console_command }
+  command.ace_multi.backup.delete:
+    class: Acquia\Console\Cloud\Command\Backups\AcquiaCloudBackupDeleteMultisite
+    public: true
+    arguments: [ '@event_dispatcher', '@config.storage', '@platform_command_executioner' ]
+    tags:
+      - { name: common_console_command }
   command.ace.database.backup.create:
     class: Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate
     public: true
@@ -82,6 +94,12 @@ services:
     class: Acquia\Console\Cloud\Command\Helpers\AcquiaCloudDbBackupRestoreHelper
     public: true
     arguments: ['@event_dispatcher']
+    tags:
+      - { name: common_console_command }
+  command.ace.database.backup.delete.helper:
+    class: Acquia\Console\Cloud\Command\Helpers\AcquiaCloudDbBackupDeleteHelper
+    public: true
+    arguments: [ '@event_dispatcher' ]
     tags:
       - { name: common_console_command }
   command.ace.database.backup.delete:

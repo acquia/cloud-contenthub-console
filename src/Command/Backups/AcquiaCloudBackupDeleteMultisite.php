@@ -2,20 +2,19 @@
 
 namespace Acquia\Console\Cloud\Command\Backups;
 
-
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 
 /**
- * Class AcquiaCloudBackupRestoreMultisite
+ * Class AcquiaCloudBackupDeleteMultisite
  *
  * @package Acquia\Console\Cloud\Command\Backups
  */
-class AcquiaCloudBackupRestoreMultisite extends AcquiaCloudBackupRestore {
+class AcquiaCloudBackupDeleteMultisite extends AcquiaCloudBackupDelete {
 
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'ace-multi:backup:restore';
+  protected static $defaultName = 'ace-multi:backup:delete';
 
   /**
    * {@inheritdoc}
@@ -28,14 +27,14 @@ class AcquiaCloudBackupRestoreMultisite extends AcquiaCloudBackupRestore {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setDescription('Restores a snapshot of Acquia Content Hub Service and database backups for all sites within ACE Multi-site environment.');
-    $this->setAliases(['ace-brm']);
+    $this->setDescription('Delete snapshot of ACH service and database backups for all sites within ACE Multi-site environment.');
+    $this->setAliases(['ace-bdm']);
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
-  protected function getPlatformSitesForRestore(): array {
+  protected function getPlatformSitesForDelete(): array {
     return $this->platform->getMultiSites();
   }
 
@@ -47,3 +46,4 @@ class AcquiaCloudBackupRestoreMultisite extends AcquiaCloudBackupRestore {
   }
 
 }
+
