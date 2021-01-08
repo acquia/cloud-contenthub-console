@@ -4,7 +4,7 @@ namespace Acquia\Console\Cloud\Command;
 
 use Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
-use Acquia\Console\ContentHub\Command\ContentHubQueue;
+//use Acquia\Console\ContentHub\Command\ContentHubQueue;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;

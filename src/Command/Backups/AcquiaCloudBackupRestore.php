@@ -4,7 +4,7 @@ namespace Acquia\Console\Cloud\Command\Backups;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\Helpers\AcquiaCloudDbBackupRestoreHelper;
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
 use Acquia\Console\ContentHub\Command\Helpers\ContentHubRestoreSnapshotHelper;
 use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
@@ -42,7 +42,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
   /**
    * Command executioner service.
    *
-   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
    */
   protected $executioner;
 
@@ -66,7 +66,7 @@ class AcquiaCloudBackupRestore extends AcquiaCloudCommandBase {
    *   Event dispatcher.
    * @param \EclipseGc\CommonConsole\Config\ConfigStorage $configStorage
    *   Config storage.
-   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $executioner
+   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $executioner
    *   Command executioner service instance.
    * @param string|NULL $name
    *   Command name.

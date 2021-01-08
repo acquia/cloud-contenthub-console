@@ -3,7 +3,7 @@
 namespace Acquia\Console\Cloud\Platform;
 
 use Acquia\Console\Cloud\Client\AcquiaCloudClientFactory;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Consolidation\Config\Config;

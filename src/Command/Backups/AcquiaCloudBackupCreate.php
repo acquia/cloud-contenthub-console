@@ -6,8 +6,8 @@ use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupCreate;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupHelperTrait;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupList;
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Acquia\Console\ContentHub\Command\ServiceSnapshots\ContentHubCreateSnapshot;
 use Consolidation\Config\Config;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
@@ -30,7 +30,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
   /**
    * The platform command executioner.
    *
-   * @var \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner
+   * @var \Acquia\Console\Helpers\Client\PlatformCommandExecutioner
    */
   protected $platformCommandExecutioner;
 
@@ -72,7 +72,7 @@ class AcquiaCloudBackupCreate extends AcquiaCloudCommandBase {
    *   Event dispatcher.
    * @param \EclipseGc\CommonConsole\Config\ConfigStorage $config_storage
    *   Config storage.
-   * @param \Acquia\Console\ContentHub\Client\PlatformCommandExecutioner $platform_command_executioner
+   * @param \Acquia\Console\Helpers\Client\PlatformCommandExecutioner $platform_command_executioner
    *   The platform command executioner.
    * @param string|NULL $name
    *   Command name.

@@ -3,7 +3,7 @@
 namespace Acquia\Console\Cloud\Tests\Command\Backups;
 
 use Acquia\Console\Cloud\Command\Backups\AcquiaCloudBackupCreate;
-use Acquia\Console\ContentHub\Client\PlatformCommandExecutioner;
+use Acquia\Console\Helpers\Client\PlatformCommandExecutioner;
 use EclipseGc\CommonConsole\Config\ConfigStorage;
 use Exception;
 use Prophecy\Argument;

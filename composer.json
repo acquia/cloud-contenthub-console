@@ -5,6 +5,7 @@
     "require": {
         "ext-json": "*",
         "eclipsegc/common-console": "0.0.x-dev",
+        "acquia/console-helpers": "dev-main",
         "typhonius/acquia-php-sdk-v2": "^2.0.0"
     },
     "autoload": {

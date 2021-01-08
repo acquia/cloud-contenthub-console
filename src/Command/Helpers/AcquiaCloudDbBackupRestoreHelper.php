@@ -4,7 +4,7 @@ namespace Acquia\Console\Cloud\Command\Helpers;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
 use Acquia\Console\Cloud\Command\DatabaseBackup\AcquiaCloudDatabaseBackupHelperTrait;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use AcquiaCloudApi\Response\OperationResponse;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
