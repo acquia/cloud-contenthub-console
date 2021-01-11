@@ -96,24 +96,6 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: common_console_command }
-  command.ace.cron_create:
-    class: Acquia\Console\Cloud\Command\AcquiaCloudCronCreate
-    public: true
-    arguments: ['@event_dispatcher', '@platform_command_executioner']
-    tags:
-      - { name: common_console_command }
-  command.ace.cron_create.multi_site:
-    class: Acquia\Console\Cloud\Command\AcquiaCloudCronCreateMultiSite
-    public: true
-    arguments: ['@event_dispatcher', '@platform_command_executioner']
-    tags:
-      - { name: common_console_command }
-  command.ace.cron_check:
-    class: Acquia\Console\Cloud\Command\AcquiaCloudCronCheck
-    public: true
-    arguments: ['@event_dispatcher']
-    tags:
-      - { name: common_console_command }
   command.ace.multi_sites:
     class: Acquia\Console\Cloud\Command\AcquiaCloudMultiSites
     public: true
