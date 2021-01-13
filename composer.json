@@ -4,7 +4,7 @@
     "type": "project",
     "require": {
         "ext-json": "*",
-        "eclipsegc/common-console": "0.0.x-dev",
+        "eclipsegc/common-console": "dev-LCH-4554",
         "acquia/console-helpers": "dev-LCH-4692",
         "typhonius/acquia-php-sdk-v2": "^2.0.0"
     },
