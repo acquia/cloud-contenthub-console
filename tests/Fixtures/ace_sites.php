@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 return [
   [
     'env_uuid' => '312217-71cc9e8b-c758-4257-84ad-3e4529e0f076',

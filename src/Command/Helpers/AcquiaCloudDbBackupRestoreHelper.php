@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Acquia\Console\Cloud\Command\Helpers
  */
-class AcquiaCloudDbBackupRestoreHelper extends AcquiaCloudCommandBase{
+class AcquiaCloudDbBackupRestoreHelper extends AcquiaCloudCommandBase {
 
   use AcquiaCloudDatabaseBackupHelperTrait;
   use PlatformCmdOutputFormatterTrait;

@@ -17,7 +17,7 @@ return [
     'completed_at' => '2012-05-15T12:00:00Z',
     'flags' =>
       [
-        'deleted' => false,
+        'deleted' => FALSE,
       ],
     'environment' =>
       [
@@ -40,7 +40,7 @@ return [
           ],
       ],
   ],
-  (object)[
+  (object) [
     'id' => 2,
     'database' =>
       [
@@ -52,7 +52,7 @@ return [
     'completed_at' => '2012-03-28T12:00:01Z',
     'flags' =>
       [
-        'deleted' => false,
+        'deleted' => FALSE,
       ],
     'environment' =>
       [
@@ -75,7 +75,7 @@ return [
           ],
       ],
   ],
-  (object)[
+  (object) [
     'id' => 3,
     'database' =>
       [
@@ -87,7 +87,7 @@ return [
     'completed_at' => '2017-01-08T04:00:01Z',
     'flags' =>
       [
-        'deleted' => false,
+        'deleted' => FALSE,
       ],
     'environment' =>
       [
@@ -110,7 +110,7 @@ return [
           ],
       ],
   ],
-  (object)[
+  (object) [
     'id' => 4,
     'database' =>
       [
@@ -122,7 +122,7 @@ return [
     'completed_at' => '2017-01-08T05:00:03Z',
     'flags' =>
       [
-        'deleted' => false,
+        'deleted' => FALSE,
       ],
     'environment' =>
       [

@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
 
 /**
- * Class AcquiaCloudPlatform
+ * Class AcquiaCloudPlatform.
  *
  * @package Acquia\Console\Cloud\Platform
  */
@@ -194,7 +194,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $uri = $this->getActivedomain($environment_id);
-      if (isset($input_uri) && $input_uri !== $uri ) {
+      if (isset($input_uri) && $input_uri !== $uri) {
         continue;
       }
       $environment = $environments->get($environment_id);
@@ -244,7 +244,8 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $environment = $environments->get($environment_id);
       $sites[$environment->uuid] = [
         'uri' => $this->getActiveDomain($environment_id),
-        'platform_id' => static::getPlatformId()];
+        'platform_id' => static::getPlatformId()
+];
     }
     return $sites;
   }

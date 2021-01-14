@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 return [
   'backup_create' => (object) [
     'uuid' => '1bd3487e-71d1-4fca-a2d9-5f969b3d35c1',

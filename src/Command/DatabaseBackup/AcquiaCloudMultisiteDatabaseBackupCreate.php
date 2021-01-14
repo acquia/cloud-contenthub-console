@@ -49,7 +49,7 @@ class AcquiaCloudMultisiteDatabaseBackupCreate extends AcquiaCloudMultisiteDatab
         return 1;
       }
     }
-    foreach($databases as $db) {
+    foreach ($databases as $db) {
       $resp = $this->initiateBackup($env_id, $db);
       $output->writeln("<info>{$resp->message}</info>");
       $this->waitInteractive($input, $output, $resp->links->notification->href, $this->acquiaCloudClient);

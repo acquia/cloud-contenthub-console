@@ -86,6 +86,7 @@ class PlatformConfigHttpProtocol implements EventSubscriberInterface {
       case 'Acquia Cloud':
         $uris = $this->getPlatformSites($config, $cloud_client);
         break;
+
       case 'Acquia Cloud Multi Site':
         $uris = $this->getPlatformMultiSites($config, $output, $cloud_client);
         break;

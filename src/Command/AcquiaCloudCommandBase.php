@@ -36,7 +36,7 @@ abstract class AcquiaCloudCommandBase extends Command implements PlatformCommand
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher service.
-   * @param string|NULL $name
+   * @param string|null $name
    *   The command name.
    */
   public function __construct(EventDispatcherInterface $event_dispatcher, string $name = NULL) {

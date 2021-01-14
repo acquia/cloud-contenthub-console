@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * Trait CommandTestHelperTrait
+ * Trait CommandTestHelperTrait.
  *
  * @package Acquia\Console\Cloud\Tests\Command
  */

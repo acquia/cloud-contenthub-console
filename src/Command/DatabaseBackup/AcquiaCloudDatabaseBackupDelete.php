@@ -31,7 +31,7 @@ class AcquiaCloudDatabaseBackupDelete extends AcquiaCloudDatabaseBackupBase {
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
     $this->setAliases(['ace-dbdel']);
   }
-  
+
   /**
    * {@inheritdoc}
    */
