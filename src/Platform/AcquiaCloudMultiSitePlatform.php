@@ -3,7 +3,7 @@
 namespace Acquia\Console\Cloud\Platform;
 
 use Acquia\Console\Cloud\Client\AcquiaCloudClientFactory;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Consolidation\Config\Config;
@@ -60,7 +60,8 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     if ($input_uri) {
       if (in_array($input_uri, $sites, TRUE)) {
         $sites = [$input_uri];
-      } else {
+      }
+      else {
         $output->writeln(sprintf("Given Url does not belong to the sites within the platform. %s", $input_uri));
         return 2;
       }
@@ -84,7 +85,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
    *   An array of all sites urls in this Multi-site Platform keyed by directory.
    */
   public function getMultiSites(): array {
-    $output = new StreamOutput(fopen('php://memory', 'r+', false));
+    $output = new StreamOutput(fopen('php://memory', 'r+', FALSE));
     $environments = new Environments($this->getAceClient());
     $env_id = current($this->get(self::ACE_ENVIRONMENT_DETAILS));
     $environment = $environments->get($env_id);
@@ -109,10 +110,10 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
    *   Path to vendor dir.
    *
    * @return array
-   *  Array containing site URIs.
+   *   Array containing site URIs.
    */
   public function getPlatformMultiSites(EnvironmentResponse $env_response, string $application, OutputInterface $output, string $vendor_path): array {
-    $remote_output = new StreamOutput(fopen('php://memory', 'r+', false));
+    $remote_output = new StreamOutput(fopen('php://memory', 'r+', FALSE));
 
     $process = new Process("ssh {$env_response->sshUrl} 'cd /var/www/html/$application; cd $vendor_path; ./vendor/bin/commoncli ace:multi:sites'");
     $this->runner->run($process, $this, $remote_output);

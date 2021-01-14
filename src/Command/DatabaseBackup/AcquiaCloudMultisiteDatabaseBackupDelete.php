@@ -31,7 +31,7 @@ class AcquiaCloudMultisiteDatabaseBackupDelete extends AcquiaCloudMultisiteDatab
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
     $this->setAliases(['ace-dbdelm']);
   }
-  
+
   /**
    * {@inheritdoc}
    */

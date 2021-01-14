@@ -2,7 +2,7 @@
 
 namespace Acquia\Console\Cloud\Command\DatabaseBackup;
 
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -38,7 +38,7 @@ class AcquiaCloudMultisiteDatabaseBackupList extends AcquiaCloudMultisiteDatabas
    */
   protected function doRunCommand(string $env_id, array $databases, InputInterface $input, OutputInterface $output): int {
     $list = [];
-    foreach($databases as $db_name) {
+    foreach ($databases as $db_name) {
       $list[$db_name] = $this->getBackupList($env_id, $db_name);
     }
     if (empty($list) && !isset($list)) {
@@ -49,7 +49,7 @@ class AcquiaCloudMultisiteDatabaseBackupList extends AcquiaCloudMultisiteDatabas
     $table = new Table($output);
     $table->setHeaders(['DB Name', 'Completed', 'ID', 'Type']);
     foreach ($list as $db_name => $backups) {
-      foreach($backups as $backup) {
+      foreach ($backups as $backup) {
         $silent[] = [
           'env_id' => $env_id,
           'database' => $db_name,

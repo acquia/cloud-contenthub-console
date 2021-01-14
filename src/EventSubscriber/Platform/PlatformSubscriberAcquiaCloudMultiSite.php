@@ -7,7 +7,7 @@ use EclipseGc\CommonConsole\Event\GetPlatformTypeEvent;
 use EclipseGc\CommonConsole\Event\GetPlatformTypesEvent;
 
 /**
- * Class PlatformSubscriberAcquiaCloudMultiSite
+ * Class PlatformSubscriberAcquiaCloudMultiSite.
  *
  * @package Acquia\Console\Cloud\EventSubscriber\Platform
  */
@@ -34,7 +34,8 @@ class PlatformSubscriberAcquiaCloudMultiSite extends PlatformSubscriberAcquiaClo
   public function onGetPlatformType(GetPlatformTypeEvent $event) {
     if ($event->getPlatformType() === AcquiaCloudMultiSitePlatform::getPlatformId()) {
       $event->addClass(AcquiaCloudMultiSitePlatform::class);
-      $event->stopPropagation();;
+      $event->stopPropagation();
+      ;
     }
   }
 

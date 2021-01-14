@@ -47,19 +47,19 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
       'create backup' => [
         'arguments' => [
           // Second case.
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
-          ['post','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          ['post', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
           // Third case.
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
-          ['post','/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
-          ['get','/notifications/2343b683-b194-4217-982a-6a95c72ad9a8'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
+          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          ['post', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
+          ['get', '/notifications/2343b683-b194-4217-982a-6a95c72ad9a8'],
         ],
         'returns' => [
           // Second case.

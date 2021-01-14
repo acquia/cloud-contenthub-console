@@ -9,7 +9,7 @@ use EclipseGc\CommonConsole\Event\GetPlatformTypesEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class PlatformSubscriberAcquiaCloud
+ * Class PlatformSubscriberAcquiaCloud.
  *
  * @package Acquia\Console\Cloud\EventSubscriber\Platform
  */
@@ -45,7 +45,8 @@ class PlatformSubscriberAcquiaCloud implements EventSubscriberInterface {
   public function onGetPlatformType(GetPlatformTypeEvent $event) {
     if ($event->getPlatformType() === AcquiaCloudPlatform::getPlatformId()) {
       $event->addClass(AcquiaCloudPlatform::class);
-      $event->stopPropagation();;
+      $event->stopPropagation();
+      ;
     }
   }
 

@@ -57,8 +57,7 @@ trait AceNotificationHandlerTrait {
     do {
       $resp = $notifications->get($this->getNotificationUuid($notification_url));
       sleep(3);
-    }
-    while ($resp->status !== 'completed');
+    } while ($resp->status !== 'completed');
 
     return $resp->label;
   }

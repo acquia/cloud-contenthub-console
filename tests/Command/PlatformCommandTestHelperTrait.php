@@ -30,7 +30,6 @@ use Symfony\Component\Process\Process;
  */
 trait PlatformCommandTestHelperTrait {
 
-
   /**
    * Returns a dispatcher bootstrapped for platform commands.
    *
@@ -45,7 +44,6 @@ trait PlatformCommandTestHelperTrait {
     $dispatcher->addListener(CommonConsoleEvents::ADD_PLATFORM_TO_COMMAND, [$any_platform, 'onAddPlatformToCommand']);
     return $dispatcher;
   }
-
 
   /**
    * Returns a platform of type Acquia Cloud.
@@ -68,7 +66,8 @@ trait PlatformCommandTestHelperTrait {
       $client_factory->fromCredentials(Argument::any(), Argument::any())
         ->shouldBeCalled()
         ->willReturn($client->reveal());
-    } else {
+    }
+    else {
       $platform_storage->save(Argument::any())
         ->shouldBeCalled()
         ->willReturn($this->saveMocks());
@@ -101,7 +100,8 @@ trait PlatformCommandTestHelperTrait {
       $client_mock_modifier($client);
       $acsf_factory->fromCredentials(Argument::any(), Argument::any(), Argument::any())
         ->willReturn($client->reveal());
-    } else {
+    }
+    else {
       $platform_storage->save(Argument::any())
         ->shouldBeCalled()
         ->willReturn($this->saveMocks());
@@ -141,27 +141,65 @@ trait PlatformCommandTestHelperTrait {
   /**
    * Returns mock instance for save().
    *
-   * @return PlatformInterface
+   * @return \EclipseGc\CommonConsole\PlatformInterface
    */
   private function saveMocks(): PlatformInterface {
     return new Class implements PlatformInterface {
-      public static function getQuestions() {}
 
-      public static function getPlatformId(): string {}
+      /**
+       *
+       */
+      public static function getQuestions() {
+      }
 
-      public function getAlias(): string {}
+      /**
+       *
+       */
+      public static function getPlatformId(): string {
+      }
 
-      public function execute(Command $command, InputInterface $input, OutputInterface $output): int {}
+      /**
+       *
+       */
+      public function getAlias(): string {
+      }
 
-      public function out(Process $process, OutputInterface $output, string $type, string $buffer): void {}
+      /**
+       *
+       */
+      public function execute(Command $command, InputInterface $input, OutputInterface $output): int {
+      }
 
-      public function get(string $key) {}
+      /**
+       *
+       */
+      public function out(Process $process, OutputInterface $output, string $type, string $buffer): void {
+      }
 
-      public function set(string $key, $value) {}
+      /**
+       *
+       */
+      public function get(string $key) {
+      }
 
-      public function export(): array {}
+      /**
+       *
+       */
+      public function set(string $key, $value) {
+      }
 
-      public function save(): PlatformInterface {}
+      /**
+       *
+       */
+      public function export(): array {
+      }
+
+      /**
+       *
+       */
+      public function save(): PlatformInterface {
+      }
+
     };
   }
 

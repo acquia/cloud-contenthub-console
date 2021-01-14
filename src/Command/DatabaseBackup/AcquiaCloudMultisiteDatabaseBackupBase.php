@@ -35,13 +35,13 @@ abstract class AcquiaCloudMultisiteDatabaseBackupBase extends AcquiaCloudCommand
     $platform = $this->getPlatform('source');
     $env_uuid = current($platform->get(AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS));
 
-    if(!$env_uuid) {
+    if (!$env_uuid) {
       $output->writeln('No site configured. Exiting...');
       return 1;
     }
     $databases = $this->getDatabasesByEnvironment($env_uuid);
     $dbs = [];
-    foreach($databases as $db_info) {
+    foreach ($databases as $db_info) {
       $dbs[] = $db_info->name;
     }
     if ($input->hasOption('all') && $input->getOption('all')) {

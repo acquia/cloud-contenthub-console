@@ -6,9 +6,7 @@ use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Cloud\Tests\Command\CommandTestHelperTrait;
 use Acquia\Console\Cloud\Tests\Command\PlatformCommandTestHelperTrait;
 use Acquia\Console\Cloud\Tests\TestFixtureHelperTrait;
-use AcquiaCloudApi\Connector\Client;
 use EclipseGc\CommonConsole\PlatformInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -66,7 +64,8 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
           $client->request(Argument::any(), Argument::any())
             ->shouldBeCalled()
             ->willReturn(...$arg['returns']);
-        } else {
+        }
+        else {
           $client->request(Argument::any(), Argument::any())
             ->shouldBeCalled()
             ->willReturn(...$arg['returns']);
@@ -80,7 +79,7 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
         AcquiaCloudPlatform::ACE_API_SECRET => 'test_secret',
         AcquiaCloudPlatform::ACE_APPLICATION_ID => ['test1'],
         AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS => [
-          '111111-11111111-c36a-401a-9724-fd8072a607d7'=>'111111-11111111-c36a-401a-9724-fd8072a607d7'
+          '111111-11111111-c36a-401a-9724-fd8072a607d7' => '111111-11111111-c36a-401a-9724-fd8072a607d7'
         ]
       ],
       $client_mock_callback

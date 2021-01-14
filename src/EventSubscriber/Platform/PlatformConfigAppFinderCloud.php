@@ -67,7 +67,7 @@ class PlatformConfigAppFinderCloud implements EventSubscriberInterface {
     }
     $output->writeln('<info>Console now trying to locate vendor directory within your platform.</info>');
     $paths = $this->locateVendorDirectory($config);
-    foreach ($paths as $env_id =>$path) {
+    foreach ($paths as $env_id => $path) {
       if (!$path) {
         $event->addError("<error>Cannot find vendor directory in environment: $env_id.</error>");
       }

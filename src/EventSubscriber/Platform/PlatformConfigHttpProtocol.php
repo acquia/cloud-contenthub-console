@@ -4,7 +4,7 @@ namespace Acquia\Console\Cloud\EventSubscriber\Platform;
 
 use Acquia\Console\Cloud\Client\AcquiaCloudClientFactory;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformCmdOutputFormatterTrait;
+use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Endpoints\Environments;
 use Consolidation\Config\Config;
@@ -86,6 +86,7 @@ class PlatformConfigHttpProtocol implements EventSubscriberInterface {
       case 'Acquia Cloud':
         $uris = $this->getPlatformSites($config, $cloud_client);
         break;
+
       case 'Acquia Cloud Multi Site':
         $uris = $this->getPlatformMultiSites($config, $output, $cloud_client);
         break;
