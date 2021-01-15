@@ -8,6 +8,8 @@ php:
 
 before_script:
   - composer require --dev php-coveralls/php-coveralls
+# The following lines will not be needed once there are public repositories, but while this is still private:
+  - composer config repositories.console-helpers '{"type":"vcs","url":"git@github.com:acquia/console-helpers.git","no-api":true}'
   - composer install
 
 after_script:
