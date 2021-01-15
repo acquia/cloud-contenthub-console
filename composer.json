@@ -5,7 +5,7 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "ext-json": "*",
-        "acquia/console-helpers": "dev-main",
+        "acquia/console-helpers": "main-dev",
         "typhonius/acquia-php-sdk-v2": "^2.0.0"
     },
     "autoload": {
