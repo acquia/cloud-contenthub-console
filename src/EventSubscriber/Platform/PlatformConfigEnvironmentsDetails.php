@@ -28,6 +28,7 @@ class PlatformConfigEnvironmentsDetails implements EventSubscriberInterface {
    * PlatformConfigEnvironmentsDetails constructor.
    *
    * @param \Acquia\Console\Cloud\Client\AcquiaCloudClientFactory $factory
+   *   ACE Factory.
    */
   public function __construct(AcquiaCloudClientFactory $factory) {
     $this->factory = $factory;
@@ -49,7 +50,10 @@ class PlatformConfigEnvironmentsDetails implements EventSubscriberInterface {
    */
   public function onPlatformConfig(PlatformConfigEvent $event) {
     $config = $event->getConfig();
-    if (!in_array($config->get('platform.type'), ['Acquia Cloud', 'Acquia Cloud Multi Site'], TRUE)) {
+    if (!in_array($config->get('platform.type'), [
+        'Acquia Cloud',
+        'Acquia Cloud Multi Site'
+    ], TRUE)) {
       return;
     }
 

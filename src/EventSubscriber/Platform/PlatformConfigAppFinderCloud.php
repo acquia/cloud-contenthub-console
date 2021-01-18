@@ -24,7 +24,7 @@ class PlatformConfigAppFinderCloud implements EventSubscriberInterface {
    * @var array
    *   Platform types.
    */
-  protected $platform_types = [
+  protected $platformTypes = [
     'Acquia Cloud',
     'Acquia Cloud Multi Site'
   ];
@@ -40,6 +40,7 @@ class PlatformConfigAppFinderCloud implements EventSubscriberInterface {
    * PlatformConfigAppFinderCloud constructor.
    *
    * @param \Acquia\Console\Cloud\Client\AcquiaCloudClientFactory $factory
+   *   ACE Factory.
    */
   public function __construct(AcquiaCloudClientFactory $factory) {
     $this->factory = $factory;
@@ -62,7 +63,7 @@ class PlatformConfigAppFinderCloud implements EventSubscriberInterface {
   public function onPlatformConfig(PlatformConfigEvent $event) {
     $output = $event->getOutput();
     $config = $event->getConfig();
-    if (!in_array($config->get('platform.type'), $this->platform_types, TRUE)) {
+    if (!in_array($config->get('platform.type'), $this->platformTypes, TRUE)) {
       return;
     }
     $output->writeln('<info>Console now trying to locate vendor directory within your platform.</info>');
@@ -112,6 +113,7 @@ class PlatformConfigAppFinderCloud implements EventSubscriberInterface {
    * Gets environment ids from platform configuration.
    *
    * @param \Consolidation\Config\Config $config
+   *   Config instance.
    *
    * @return array
    *   Environment ids.
@@ -123,15 +125,15 @@ class PlatformConfigAppFinderCloud implements EventSubscriberInterface {
   /**
    * Runs command on platform to look for executables.
    *
-   * @param $ssh_url
+   * @param string $ssh_url
    *   SSH url of platform site.
-   * @param $application
+   * @param string $application
    *   Application name.
    *
    * @return string
    *   Executable path.
    */
-  protected function getPathToExecutable($ssh_url, $application): string {
+  protected function getPathToExecutable(string $ssh_url, string $application): string {
     $command = "ssh $ssh_url 'cd /var/www/html/$application; find . -executable -type f | grep commoncli'";
     $process = new Process($command);
     $process->run();

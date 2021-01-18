@@ -140,6 +140,8 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
   }
 
   /**
+   * Prefix the domain with protocol.
+   *
    * @param array $sites
    *   Array containing URI's where key is multi site directory name.
    *

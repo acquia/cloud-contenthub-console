@@ -40,8 +40,14 @@ trait PlatformCommandTestHelperTrait {
     $subscriber = new PlatformIdMatch();
     $any_platform = new AnyPlatform();
     $dispatcher = new EventDispatcher();
-    $dispatcher->addListener(CommonConsoleEvents::ADD_PLATFORM_TO_COMMAND, [$subscriber, 'onAddPlatformToCommand']);
-    $dispatcher->addListener(CommonConsoleEvents::ADD_PLATFORM_TO_COMMAND, [$any_platform, 'onAddPlatformToCommand']);
+    $dispatcher->addListener(CommonConsoleEvents::ADD_PLATFORM_TO_COMMAND, [
+      $subscriber,
+      'onAddPlatformToCommand'
+    ]);
+    $dispatcher->addListener(CommonConsoleEvents::ADD_PLATFORM_TO_COMMAND, [
+      $any_platform,
+      'onAddPlatformToCommand'
+    ]);
     return $dispatcher;
   }
 
@@ -50,13 +56,14 @@ trait PlatformCommandTestHelperTrait {
    *
    * @param array $platform_config
    *   The platform configuration array.
-   * @param callable $client_mock_modifier
+   * @param callable|null $client_mock_modifier
    *   [Optional] The callable function to alter client. It accepts a
    *   MockObject.
    *
-   * @return mixed
+   * @return \Acquia\Console\Cloud\Platform\AcquiaCloudPlatform
+   *   Return Acquia Cloud Platform mock instance.
    */
-  protected function getAcquiaCloudPlatform(array $platform_config, callable $client_mock_modifier = NULL) {
+  protected function getAcquiaCloudPlatform(array $platform_config, callable $client_mock_modifier = NULL): AcquiaCloudPlatform {
     $client_factory = $this->prophesize(AcquiaCloudClientFactory::class);
     $platform_storage = $this->prophesize(PlatformStorage::class);
 
@@ -86,12 +93,18 @@ trait PlatformCommandTestHelperTrait {
   }
 
   /**
+   * Returns a platform of type ACSF.
+   *
    * @param array $platform_config
-   * @param callable $client_mock_modifier
+   *   Platform Config array.
+   * @param callable|null $client_mock_modifier
+   *   [Optional] The callable function to alter client. It accepts a
+   *   MockObject.
    *
    * @return \Acquia\Console\Acsf\Platform\ACSFPlatform
+   *   ACSF Platform Mock instance.
    */
-  protected function getAcsfPlatform(array $platform_config, callable $client_mock_modifier = NULL) {
+  protected function getAcsfPlatform(array $platform_config, callable $client_mock_modifier = NULL): ACSFPlatform {
     $acsf_factory = $this->prophesize(AcsfClientFactory::class);
     $platform_storage = $this->prophesize(PlatformStorage::class);
 
@@ -142,60 +155,61 @@ trait PlatformCommandTestHelperTrait {
    * Returns mock instance for save().
    *
    * @return \EclipseGc\CommonConsole\PlatformInterface
+   *   Platform Mock Object.
    */
   private function saveMocks(): PlatformInterface {
     return new Class implements PlatformInterface {
 
       /**
-       *
+       *  {@inheritDoc}
        */
       public static function getQuestions() {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public static function getPlatformId(): string {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function getAlias(): string {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function execute(Command $command, InputInterface $input, OutputInterface $output): int {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function out(Process $process, OutputInterface $output, string $type, string $buffer): void {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function get(string $key) {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function set(string $key, $value) {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function export(): array {
       }
 
       /**
-       *
+       * {@inheritDoc}
        */
       public function save(): PlatformInterface {
       }

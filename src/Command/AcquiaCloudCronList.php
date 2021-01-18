@@ -42,7 +42,12 @@ class AcquiaCloudCronList extends AcquiaCloudCommandBase {
     }
 
     $table = new Table($output);
-    $table->setHeaders(['Environment id', 'Environment name', 'Label', 'Cron ID']);
+    $table->setHeaders([
+      'Environment id',
+      'Environment name',
+      'Label',
+      'Cron ID'
+    ]);
     $table->addRows($rows);
     $table->render();
 

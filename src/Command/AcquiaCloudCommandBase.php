@@ -20,6 +20,8 @@ abstract class AcquiaCloudCommandBase extends Command implements PlatformCommand
   use PlatformCommandTrait;
 
   /**
+   * ACE Client.
+   *
    * @var \AcquiaCloudApi\Connector\ClientInterface
    */
   protected $acquiaCloudClient = NULL;

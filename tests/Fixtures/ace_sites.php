@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Mock Response for ACE Sites Requests.
  */
 
 return [
