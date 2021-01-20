@@ -49,16 +49,31 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
           // Second case.
           ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
+          [
+            'get',
+            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'
+          ],
           ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
-          ['post', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
+          [
+            'get',
+            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'
+          ],
+          [
+            'post',
+            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'
+          ],
           // Third case.
           ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
           ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7'],
-          ['get', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'],
-          ['post', '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'],
+          [
+            'get',
+            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases'
+          ],
+          [
+            'post',
+            '/environments/111111-11111111-c36a-401a-9724-fd8072a607d7/databases/example/backups'
+          ],
           ['get', '/notifications/2343b683-b194-4217-982a-6a95c72ad9a8'],
         ],
         'returns' => [
@@ -82,18 +97,30 @@ class AcquiaCloudDatabaseBackupCreateTest extends AcquiaCloudDatabaseBackupTestB
 
     // First case doesn't require input.
     $tester = $this->getCmdTesterInstanceOf(AcquiaCloudDatabaseBackupCreate::class, $arguments);
-    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7', 'example', 'no'])->execute([]);
+    $tester->setInputs([
+      '111111-11111111-c36a-401a-9724-fd8072a607d7',
+      'example',
+      'no'
+    ])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Backup process terminated by user', $output);
     // Second case.
-    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7', 'example', 'yes'])->execute([]);
+    $tester->setInputs([
+      '111111-11111111-c36a-401a-9724-fd8072a607d7',
+      'example',
+      'yes'
+    ])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Process has been queued. Check the task logs for more information.', $output);
 
     // Third case.
-    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7', 'example', 'yes'])->execute(['--wait' => TRUE]);
+    $tester->setInputs([
+      '111111-11111111-c36a-401a-9724-fd8072a607d7',
+      'example',
+      'yes'
+    ])->execute(['--wait' => TRUE]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Database created', $output, 'Wait function works.');

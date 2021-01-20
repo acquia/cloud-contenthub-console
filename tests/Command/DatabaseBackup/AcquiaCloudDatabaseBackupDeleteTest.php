@@ -53,7 +53,11 @@ class AcquiaCloudDatabaseBackupDeleteTest extends AcquiaCloudDatabaseBackupTestB
     ];
 
     $tester = $this->getCmdTesterInstanceOf(AcquiaCloudDatabaseBackupDelete::class, $arguments);
-    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7', 0, '2017-01-08T05:00:02Z'])->execute([]);
+    $tester->setInputs([
+      '111111-11111111-c36a-401a-9724-fd8072a607d7',
+      0,
+      '2017-01-08T05:00:02Z'
+    ])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Database backup deleted.', $output);

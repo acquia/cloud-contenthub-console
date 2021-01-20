@@ -128,6 +128,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    *   The Acquia Cloud Client Factory.
    *
    * @return \Symfony\Component\Console\Question\ChoiceQuestion
+   *   Choice question created.
    */
   public static function getApplicationQuestion(Config $config, AcquiaCloudClientFactory $factory) {
     $client = $factory->fromCredentials($config->get(self::ACE_API_KEY), $config->get(self::ACE_API_SECRET));
@@ -154,6 +155,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    *   The Acquia Cloud Client Factory.
    *
    * @return \Symfony\Component\Console\Question\ChoiceQuestion
+   *   Choice question created.
    */
   public static function getEnvironmentQuestion(Config $config, AcquiaCloudClientFactory $factory) {
     $client = $factory->fromCredentials($config->get(self::ACE_API_KEY), $config->get(self::ACE_API_SECRET));
@@ -224,6 +226,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    * Gets an Ace Client for this platform.
    *
    * @return \AcquiaCloudApi\Connector\Client
+   *   ACE Client.
    */
   public function getAceClient() : Client {
     return $this->clientFactory->fromCredentials($this->get(self::ACE_API_KEY), $this->get(self::ACE_API_SECRET));
@@ -245,7 +248,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $sites[$environment->uuid] = [
         'uri' => $this->getActiveDomain($environment_id),
         'platform_id' => static::getPlatformId()
-];
+      ];
     }
     return $sites;
   }

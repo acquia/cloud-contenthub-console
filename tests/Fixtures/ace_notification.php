@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Mock Response for Notifications Requests.
  */
 
 return [
