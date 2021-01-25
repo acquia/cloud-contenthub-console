@@ -1,11 +1,11 @@
 {
-    "name": "acquia/cloud-console",
+    "name": "acquia/cloud-contenthub-console",
     "description": "A package providing Acquia Cloud commands for the CommonConsole command line interface.",
     "type": "project",
     "license": "GPL-2.0-or-later",
     "require": {
         "ext-json": "*",
-        "acquia/console-helpers": "main-dev",
+        "acquia/contenthub-console-helpers": "main-dev",
         "typhonius/acquia-php-sdk-v2": "^2.0.0"
     },
     "autoload": {
