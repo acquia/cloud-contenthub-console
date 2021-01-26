@@ -7,7 +7,8 @@ Acquia Cloud Multi-sites.
 # Installation
 Install the package with the latest version of composer:
 
-    composer require acquia/cloud-contenthub-console
+    $composer require acquia/cloud-contenthub-console
+    $composer install
 
 Notice that you have to install those packages in your codebase deployed to Acquia Cloud and also in your local 
 computer so that you can execute the commands in your local terminal but they will be executed in the Cloud. 
