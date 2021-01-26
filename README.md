@@ -8,10 +8,73 @@ Acquia Cloud Multi-sites.
 Install the package with the latest version of composer:
 
     composer require acquia/cloud-contenthub-console
+
+Notice that you have to install those packages in your codebase deployed to Acquia Cloud and also in your local 
+computer so that you can execute the commands in your local terminal but they will be executed in the Cloud. 
+
+# Create An Acquia Cloud Platform
+
+In order for this tool to execute commands remotely on your Acquia Cloud Platform, you would need to first create a 
+platform with the following command:
+
+    $./vendor/bin/commoncli pc
+    
+This command will guide you to create a platform where to execute commands to. Notice that the alias given to this 
+platform will be what you will use later to point to when executing commands.
+
+When the command ask you to choose an application, you can select multiple ones separated by commas.    
+    
+    ./vendor/bin/commoncli pc                                                                           ✔  10183  12:23:03
+    This command will step you through the process of creating a new platform on which to perform common console commands.
+    Platform Type:
+      [0] SSH
+      [1] DDEV
+      [2] Acquia Cloud
+      [3] Acquia Cloud Multi Site
+     > 2
+    Name: Test Acquia Cloud Platform
+    Alias: test-ac-platform
+    Acquia Cloud API Key? (Instructions: https://docs.acquia.com/acquia-cloud/develop/api/auth/) 00000000-0000-0000-0000-000000000000
+    Acquia Cloud Secret? 1111111111111111111111111111111111111111111=
+    Choose an Application:
+      [00000000-bff1-4bb3-b1ec-9f3f6331be4a] test0000001
+      [00000000-3d80-4dac-99e5-6c96ee297c31] test0000002
+      [00000000-4fc4-102f-a6e5-1231390f9c61] test0000003
+      [00000000-2db6-4b55-9b74-92f578fc0c5d] test0000004
+      [00000000-2e84-44bb-ab30-47984919871f] test0000005
+      [00000000-95ff-42eb-aafb-4db25a3255d9] test0000006
+      [00000000-6086-4838-b45e-93df289ea6d8] test0000007
+      [00000000-50f9-4c06-8d16-6a8c540d25e5] test0000008
+      [00000000-c351-41f6-a0aa-2e07f4d9bcac] test0000009
+
+     > test0000002
+    Choose an Environment:
+      [dev ] dev
+      [prod] prod
+      [test] test
+     > dev
+    +-------------------------------+----------------------------------------------+
+    | Property                      | Value                                        |
+    +-------------------------------+----------------------------------------------+
+    | platform.type                 | Acquia Cloud                                 |
+    | platform.name                 | Test Acquia Cloud Platform                   |
+    | platform.alias                | test-ac-platform                             |
+    | acquia.cloud.api_key          | 00000000-0000-0000-0000-000000000000         |
+    | acquia.cloud.api_secret       | 1111111111111111111111111111111111111111111= |
+    | acquia.cloud.application_ids  | 00000000-3d80-4dac-99e5-6c96ee297c31         |
+    | acquia.cloud.environment.name | dev                                          |
+    +-------------------------------+----------------------------------------------+
+    Are these config correct? yes
+    Console now trying to locate vendor directory within your platform.
+    Vendor directory located successfully and saved in your platform configuration.
+    "We assume that all your sites are using HTTPS."
+    <warning>Is this assumption correct?</warning>yes
+    Successfully saved.
+
+    
     
 # Usage
 The following are some of the commands that are available to you to be used once deployed to Acquia Cloud:
-
 
     ./vendor/bin/commoncli                                                                            ✔  10178  12:19:41
     CommonConsole 0.0.1
@@ -51,3 +114,8 @@ The following are some of the commands that are available to you to be used once
       platform:list                      [pl] List available platforms.
       platform:sites                     List available sites registered in the platform.
 
+Now that you have a platform, you can execute a command like:
+
+    $./vendor/bin/commoncli ace:database:backup:create @test-ac-platform
+   
+This command will execute a database creation in all sites in the "Test Acquia Cloud Platform". 
