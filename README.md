@@ -10,8 +10,8 @@ Install the package with the latest version of composer:
     $composer require acquia/cloud-contenthub-console
     $composer install
 
-Note that this package must be installed locally and in the codebase on your remote platform (Acquia Cloud or Acquia 
-Site Factory) in order for commands to work. 
+Note that this package must be installed locally and in the codebase on your remote platform (Acquia Cloud) in order for
+commands to work. 
 
 # Create An Acquia Cloud Platform
 
