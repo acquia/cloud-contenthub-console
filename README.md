@@ -10,8 +10,8 @@ Install the package with the latest version of composer:
     $composer require acquia/cloud-contenthub-console
     $composer install
 
-Notice that you have to install those packages in your codebase deployed to Acquia Cloud and also in your local 
-computer so that you can execute the commands in your local terminal but they will be executed in the Cloud. 
+Note that this package must be installed locally and in the codebase on your remote platform (Acquia Cloud or Acquia 
+Site Factory) in order for commands to work. 
 
 # Create An Acquia Cloud Platform
 
@@ -25,7 +25,7 @@ platform will be what you will use later to point to when executing commands.
 
 When the command ask you to choose an application, you can select multiple ones separated by commas.    
     
-    ./vendor/bin/commoncli pc                                                                           ✔  10183  12:23:03
+    ./vendor/bin/commoncli pc
     This command will step you through the process of creating a new platform on which to perform common console commands.
     Platform Type:
       [0] SSH
@@ -77,7 +77,7 @@ When the command ask you to choose an application, you can select multiple ones 
 # Usage
 The following are some of the commands that are available to you to be used once deployed to Acquia Cloud:
 
-    ./vendor/bin/commoncli                                                                            ✔  10178  12:19:41
+    ./vendor/bin/commoncli
     CommonConsole 0.0.1
     
     Usage:
