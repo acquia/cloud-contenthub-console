@@ -12,7 +12,7 @@
     ],
     "require": {
         "ext-json": "*",
-        "acquia/contenthub-console-helpers": "^1.0",
+        "acquia/contenthub-console-helpers": "main-dev",
         "typhonius/acquia-php-sdk-v2": "<=2.0.15"
     },
     "autoload": {
