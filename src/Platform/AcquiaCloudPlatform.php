@@ -5,6 +5,7 @@ namespace Acquia\Console\Cloud\Platform;
 use Acquia\Console\Cloud\Client\AcquiaCloudClientFactory;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Endpoints\Applications;
+use AcquiaCloudApi\Endpoints\CloudApiBase;
 use AcquiaCloudApi\Endpoints\Environments;
 use Consolidation\Config\Config;
 use Consolidation\Config\ConfigInterface;
@@ -22,6 +23,8 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class AcquiaCloudPlatform.
@@ -47,6 +50,13 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
   public const ACE_VENDOR_PATHS = 'acquia.cloud.environment.vendor_paths';
 
   public const ACE_SITE_HTTP_PROTOCOL = 'acquia.cloud.environment.sites';
+
+  public const ACE_INCLUDED_SITES = 'acquia.cloud.environment.include';
+
+  public const PLATFORM_LOCATION = [
+    '.commonconsole',
+    'platforms',
+  ];
 
   /**
    * The Acquia Cloud Client Factory object.
@@ -189,11 +199,18 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       return 1;
     }
 
-    $input_uri = $input->getOption('uri');
+    if ($input->hasOption('group') && $group_name = $input->getOption('group')) {
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output);
+      if (is_int($sites)) {
+        return $sites;
+      }
+    }
+
     $sites = array_column($sites, 'uri');
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
     $exit_code = 0;
     $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
+    $input_uri = $input->getOption('uri');
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $uri = $this->getActivedomain($environment_id);
       if (isset($input_uri) && $input_uri !== $uri) {
@@ -245,6 +262,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     }
     foreach ($environment_details as $application_id => $environment_id) {
       $environment = $environments->get($environment_id);
+      $aa = $this->getActiveDomain($environment_id);
       $sites[$environment->uuid] = [
         'uri' => $this->getActiveDomain($environment_id),
         'platform_id' => static::getPlatformId()
@@ -304,8 +322,65 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    */
   public function prefixDomain(string $domain, string $env_id): string {
     $http_conf = $this->get(self::ACE_SITE_HTTP_PROTOCOL);
-    $prefix = isset($http_conf[$env_id]) ? $http_conf[$env_id] : 'https://';
+    $prefix = isset($http_conf[$env_id]) ?? 'https://';
     return $prefix . $domain;
+  }
+
+  /**
+   * Fetch the location of the platform group file.
+   *
+   * @return string
+   *   Grouping file path.
+   */
+  protected function groupingSitesFilePath(): string {
+    $alias = $this->getAlias();
+    $dir_parts = static::PLATFORM_LOCATION;
+    array_unshift($dir_parts, getenv('HOME'));
+    $file = implode(DIRECTORY_SEPARATOR, $dir_parts) . "/{$alias}-groups.yml";
+
+    return $file;
+  }
+
+  /**
+   * Filter list of sites via group sites.
+   *
+   * @param string $group_name
+   *   Platform grouping sites placeholder.
+   * @param array $sites
+   *   Platform sites.
+   * @param OutputInterface $output
+   *   Output stream.
+   *
+   * @return array|int
+   *   Array containing filtered list of sites.
+   */
+  protected function filterSitesByGroup(string $group_name, array $sites, OutputInterface $output) {
+    $group_file = $this->groupingSitesFilePath();
+    try {
+      $file = Yaml::parseFile($group_file);
+    }
+    catch (ParseException $exception) {
+      $output->writeln('<error>Unable to parse the YAML ' . $exception->getMessage() . '</error>', );
+      return 2;
+    }
+
+    if (!isset($file[$group_name])) {
+      $output->writeln('<error>Group name doesn\'t exists.</error>');
+      return 3;
+    }
+    elseif (empty($file[$group_name])) {
+      $output->writeln('<warning>No sites available in the groups. Exiting...</warning>');
+      return 4;
+    }
+
+    foreach ($sites as $key => $site) {
+      if (!in_array($key, $file[$group_name])) {
+        unset($sites[$key]);
+        continue;
+      }
+    }
+
+    return $sites;
   }
 
 }
