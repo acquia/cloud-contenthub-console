@@ -4,7 +4,6 @@ namespace Acquia\Console\Cloud\Platform;
 
 use Acquia\Console\Cloud\Client\AcquiaCloudClientFactory;
 use Acquia\Console\Helpers\Command\PlatformCmdOutputFormatterTrait;
-use AcquiaCloudApi\Endpoints\CloudApiBase;
 use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Consolidation\Config\Config;
@@ -15,8 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Yaml\Exception\ParseException;
 
 /**
  * Class AcquiaCloudMultiSitePlatform.
@@ -46,13 +43,11 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
   public function execute(Command $command, InputInterface $input, OutputInterface $output): int {
     if ($input->getOption('group') && $input->getOption('uri')) {
       $helper = $command->getHelper('question');
-      $question = new ConfirmationQuestion('You have provided both the options, group as well as uri. We will ignore the uri option. Do you want to proceed (y/n)?', true);
+      $question = new ConfirmationQuestion('You have provided both the options, group as well as uri. We will ignore the uri option. Do you want to proceed (y/n)?', TRUE);
       if (!$helper->ask($input, $output, $question)) {
         return 1;
       }
     }
-
-    $exit_code = 0;
 
     $environments = new Environments($this->getAceClient());
     $env_id = current($this->get(self::ACE_ENVIRONMENT_DETAILS));
@@ -66,13 +61,13 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $sites = $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return 1;
+      return 2;
     }
 
     if ($input->hasOption('group') && $group_name = $input->getOption('group')) {
       $sites = $this->filterSitesByGroup($group_name, $sites, $output);
       if (is_int($sites)) {
-        return $sites;
+        return 3;
       }
     }
     elseif ($input->hasOption('uri') && $input_uri = $input->getOption('uri')) {
@@ -81,11 +76,12 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       }
       else {
         $output->writeln(sprintf("Given Url does not belong to the sites within the platform. %s", $input_uri));
-        return 3;
+        return 4;
       }
     }
 
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
+    $exit_code = 0;
     foreach ($sites as $uri) {
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $uri));
       $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_path[$env_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");

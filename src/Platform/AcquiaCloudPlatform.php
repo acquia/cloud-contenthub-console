@@ -5,7 +5,6 @@ namespace Acquia\Console\Cloud\Platform;
 use Acquia\Console\Cloud\Client\AcquiaCloudClientFactory;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Endpoints\Applications;
-use AcquiaCloudApi\Endpoints\CloudApiBase;
 use AcquiaCloudApi\Endpoints\Environments;
 use Consolidation\Config\Config;
 use Consolidation\Config\ConfigInterface;
@@ -19,6 +18,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -192,28 +192,36 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    * {@inheritdoc}
    */
   public function execute(Command $command, InputInterface $input, OutputInterface $output) : int {
+    if ($input->getOption('group') && $input->getOption('uri')) {
+      $helper = $command->getHelper('question');
+      $question = new ConfirmationQuestion('You have provided both the options, group as well as uri. We will ignore the uri option. Do you want to proceed (y/n)?', TRUE);
+      if (!$helper->ask($input, $output, $question)) {
+        return 1;
+      }
+    }
+
     $environments = new Environments($this->getAceClient());
     $sites = $this->getPlatformSites();
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return 1;
+      return 2;
     }
 
     if ($input->hasOption('group') && $group_name = $input->getOption('group')) {
       $sites = $this->filterSitesByGroup($group_name, $sites, $output);
       if (is_int($sites)) {
-        return $sites;
+        return 3;
       }
     }
 
     $sites = array_column($sites, 'uri');
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
     $exit_code = 0;
-    $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
     $input_uri = $input->getOption('uri');
+    $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $uri = $this->getActivedomain($environment_id);
-      if (isset($input_uri) && $input_uri !== $uri) {
+      if (!$input->hasOption('group') && isset($input_uri) && $input_uri !== $uri) {
         continue;
       }
       $environment = $environments->get($environment_id);
@@ -262,7 +270,6 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     }
     foreach ($environment_details as $application_id => $environment_id) {
       $environment = $environments->get($environment_id);
-      $aa = $this->getActiveDomain($environment_id);
       $sites[$environment->uuid] = [
         'uri' => $this->getActiveDomain($environment_id),
         'platform_id' => static::getPlatformId()
@@ -322,7 +329,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    */
   public function prefixDomain(string $domain, string $env_id): string {
     $http_conf = $this->get(self::ACE_SITE_HTTP_PROTOCOL);
-    $prefix = isset($http_conf[$env_id]) ?? 'https://';
+    $prefix = $http_conf[$env_id] ?? 'https://';
     return $prefix . $domain;
   }
 
@@ -361,16 +368,16 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     }
     catch (ParseException $exception) {
       $output->writeln('<error>Unable to parse the YAML ' . $exception->getMessage() . '</error>', );
-      return 2;
+      return 1;
     }
 
     if (!isset($file[$group_name])) {
       $output->writeln('<error>Group name doesn\'t exists.</error>');
-      return 3;
+      return 2;
     }
     elseif (empty($file[$group_name])) {
       $output->writeln('<warning>No sites available in the groups. Exiting...</warning>');
-      return 4;
+      return 3;
     }
 
     foreach ($sites as $key => $site) {
