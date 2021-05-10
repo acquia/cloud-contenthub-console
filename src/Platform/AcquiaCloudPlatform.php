@@ -213,15 +213,17 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
         return 3;
       }
     }
+    else {
+      $input_uri = $input->getOption('uri');
+    }
 
     $sites = array_column($sites, 'uri');
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
     $exit_code = 0;
-    $input_uri = $input->getOption('uri');
     $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $uri = $this->getActivedomain($environment_id);
-      if (!$input->hasOption('group') && isset($input_uri) && $input_uri !== $uri) {
+      if (isset($input_uri) && $input_uri !== $uri) {
         continue;
       }
       $environment = $environments->get($environment_id);
