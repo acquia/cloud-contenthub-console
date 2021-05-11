@@ -41,13 +41,6 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
    * {@inheritdoc}
    */
   public function execute(Command $command, InputInterface $input, OutputInterface $output): int {
-    if ($input->getOption('group') && $input->getOption('uri')) {
-      $helper = $command->getHelper('question');
-      $question = new ConfirmationQuestion('You have provided both the options, group as well as uri. We will ignore the uri option. Do you want to proceed (y/n)?', TRUE);
-      if (!$helper->ask($input, $output, $question)) {
-        return 1;
-      }
-    }
 
     $environments = new Environments($this->getAceClient());
     $env_id = current($this->get(self::ACE_ENVIRONMENT_DETAILS));
@@ -61,16 +54,27 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $sites = $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return 2;
+      return 1;
     }
 
-    if ($input->hasOption('group') && $group_name = $input->getOption('group')) {
+    $group_name = $input->getOption('group');
+    $input_uri = $input->getOption('uri');
+
+    if ($group_name && $input_uri) {
+      $helper = $command->getHelper('question');
+      $question = new ConfirmationQuestion('You have provided both the options, group as well as uri. We will ignore the uri option. Do you want to proceed (y/n)?', TRUE);
+      if (!$helper->ask($input, $output, $question)) {
+        return 2;
+      }
+    }
+
+    if ($group_name) {
       $sites = $this->filterSitesByGroup($group_name, $sites, $output);
-      if (is_int($sites)) {
+      if (empty($sites)) {
         return 3;
       }
     }
-    elseif ($input->hasOption('uri') && $input_uri = $input->getOption('uri')) {
+    elseif ($input_uri) {
       if (in_array($input_uri, $sites, TRUE)) {
         $sites = [$input_uri];
       }
