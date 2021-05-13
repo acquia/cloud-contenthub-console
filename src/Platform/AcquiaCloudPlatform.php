@@ -51,11 +51,6 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
 
   public const ACE_SITE_HTTP_PROTOCOL = 'acquia.cloud.environment.sites';
 
-  public const GROUP_CONFIG_LOCATION = [
-    '.commonconsole',
-    'groups',
-  ];
-
   /**
    * The Acquia Cloud Client Factory object.
    *
