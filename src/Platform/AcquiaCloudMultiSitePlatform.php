@@ -74,7 +74,8 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
         return 3;
       }
     }
-    elseif ($input_uri) {
+
+    if (!$group_name && $input_uri) {
       if (in_array($input_uri, $sites, TRUE)) {
         $sites = [$input_uri];
       }

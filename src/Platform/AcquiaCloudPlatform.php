@@ -51,8 +51,6 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
 
   public const ACE_SITE_HTTP_PROTOCOL = 'acquia.cloud.environment.sites';
 
-  public const ACE_INCLUDED_SITES = 'acquia.cloud.environment.include';
-
   public const GROUP_CONFIG_LOCATION = [
     '.commonconsole',
     'groups',
@@ -222,7 +220,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
     $environments = new Environments($this->getAceClient());
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
-      if (!in_array($environment_id, array_keys($sites))) {
+      if (!in_array($environment_id, array_keys($sites), TRUE)) {
         continue;
       }
 
