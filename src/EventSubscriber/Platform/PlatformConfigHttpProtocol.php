@@ -97,7 +97,7 @@ class PlatformConfigHttpProtocol implements EventSubscriberInterface {
       throw new \Exception('Cannot find platform sites.');
     }
 
-    $output->writeln('<info>"We assume that all your sites are using HTTPS."</info>');
+    $output->writeln('<info>"We assume that all your sites are accessible and are using HTTPS."</info>');
     $helper = new QuestionHelper();
     $confirm = new ConfirmationQuestion('<warning>Is this assumption correct?</warning>');
     $answer = $helper->ask($input, $output, $confirm);
