@@ -3,6 +3,7 @@
 namespace Acquia\Console\Cloud\Command\DatabaseBackup;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
+use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,13 +36,9 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       $sites[$uuid] = $site_data['uri'];
     }
 
-    if ($input->hasOption('all') && $input->getOption('all')) {
-      foreach ($sites as $uuid => $site) {
-        $databases = $this->getDatabasesByEnvironment($uuid);
-        $db_info = reset($databases);
-        $this->doRunCommand($uuid, $db_info->name, $input, $output);
-      }
-      return 0;
+    $sites = $this->sitesFiltering($input, $output, $sites);
+    if (is_int($sites)) {
+      return $sites;
     }
 
     $choice = new ChoiceQuestion('Please choose the site you would like to manage a database backup for:', $sites);
@@ -73,5 +70,39 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
    *   Exit code.
    */
   abstract protected function doRunCommand(string $env_id, string $db, InputInterface $input, OutputInterface $output): int;
+
+  /**
+   * Fitler platform sites via groups and other options.
+   *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   The input object.
+   * @param array $sites
+   *   Sites list.
+   *
+   * @return array|int
+   *   List of sites after filtering.
+   */
+  protected function sitesFiltering(InputInterface $input, OutputInterface $output, array $sites) {
+    if ($group_name = $input->getOption('group')) {
+      $platform = $this->getPlatform('source');
+      $alias = $platform->getAlias();
+      $platform_id = self::getExpectedPlatformOptions()['source'];
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
+
+      return empty($sites) ? 1 : $sites;
+    }
+
+    if ($input->hasOption('all') && $input->getOption('all')) {
+      foreach ($sites as $uuid => $site) {
+        $databases = $this->getDatabasesByEnvironment($uuid);
+        $db_info = reset($databases);
+        $this->doRunCommand($uuid, $db_info->name, $input, $output);
+      }
+
+      return 0;
+    }
+
+    return $sites;
+  }
 
 }

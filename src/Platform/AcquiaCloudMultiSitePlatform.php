@@ -69,7 +69,9 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     }
 
     if ($group_name) {
-      $sites = $this->filterSitesByGroup($group_name, $sites, $output);
+      $alias = $this->getAlias();
+      $platform_id = self::getPlatformId();
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
       if (empty($sites)) {
         return 3;
       }

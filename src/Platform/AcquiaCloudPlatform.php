@@ -203,7 +203,9 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     }
 
     if ($group_name) {
-      $sites = $this->filterSitesByGroup($group_name, $sites, $output);
+      $alias = $this->getAlias();
+      $platform_id = self::getPlatformId();
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
       if (empty($sites)) {
         return 3;
       }
@@ -306,7 +308,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $domains = [];
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $response = $client->request('get', "/environments/{$environment_id}");
-      $domains[] = [
+      $domains[$environment_id] = [
         'active_domain' => $this->prefixDomain($response->active_domain, $environment_id),
         'env_uuid' => $environment_id,
       ];
