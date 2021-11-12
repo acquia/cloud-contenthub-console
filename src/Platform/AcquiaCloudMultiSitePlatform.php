@@ -60,15 +60,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $group_name = $input->getOption('group');
     $input_uri = $input->getOption('uri');
 
-    if ($group_name && $input_uri) {
-      $helper = $command->getHelper('question');
-      $question = new ConfirmationQuestion('You have provided both the options, group as well as uri. We will ignore the uri option. Do you want to proceed (y/n)?', TRUE);
-      if (!$helper->ask($input, $output, $question)) {
-        return 2;
-      }
-    }
-
-    if ($group_name) {
+    if (!$input_uri && $group_name) {
       $alias = $this->getAlias();
       $platform_id = self::getPlatformId();
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
@@ -77,7 +69,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       }
     }
 
-    if (!$group_name && $input_uri) {
+    if ($input_uri) {
       if (in_array($input_uri, $sites, TRUE)) {
         $sites = [$input_uri];
       }
