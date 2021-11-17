@@ -87,8 +87,8 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
    *   List of sites after filtering.
    */
   protected function sitesFiltering(InputInterface $input, OutputInterface $output, array $sites) {
-    $group_name = $input->getOption('group');
-    if ($input->hasOption('group') && !empty($group_name)) {
+    if ($input->hasOption('group') && !empty($input->getOption('group'))) {
+      $group_name = $input->getOption('group');
       $platform = $this->getPlatform('source');
       $alias = $platform->getAlias();
       $platform_id = self::getExpectedPlatformOptions()['source'];
