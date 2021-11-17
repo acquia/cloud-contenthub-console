@@ -97,7 +97,7 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       return empty($sites) ? 1 : $sites;
     }
 
-    if (!$input->hasOption('all')) {
+    if (!$input->getOption('all')) {
       do {
         $output->writeln('You are about to create a site backup for one of your Cloud sties.');
         $helper = $this->getHelper('question');
