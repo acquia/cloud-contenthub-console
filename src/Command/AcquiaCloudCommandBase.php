@@ -2,8 +2,8 @@
 
 namespace Acquia\Console\Cloud\Command;
 
+use Acquia\Console\Cloud\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
-use Acquia\Console\ContentHub\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
