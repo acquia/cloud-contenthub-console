@@ -8,6 +8,7 @@ use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class AcquiaCloudDatabaseBackupBase.
@@ -41,8 +42,11 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       return $sites;
     }
 
-    $choice = new ChoiceQuestion('Please choose the site you would like to manage a database backup for:', $sites);
-    $site = $helper->ask($input, $output, $choice);
+    foreach ($sites as $uuid => $site) {
+      $databases = $this->getDatabasesByEnvironment($uuid);
+      $db_info = reset($databases);
+      $this->doRunCommand($uuid, $db_info->name, $input, $output);
+    }
 
     $databases = [];
     foreach ($this->getDatabasesByEnvironment($site) as $db_info) {
@@ -83,7 +87,8 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
    *   List of sites after filtering.
    */
   protected function sitesFiltering(InputInterface $input, OutputInterface $output, array $sites) {
-    if ($group_name = $input->getOption('group')) {
+    $group_name = $input->getOption('group');
+    if ($input->hasOption('group') && !empty($group_name)) {
       $platform = $this->getPlatform('source');
       $alias = $platform->getAlias();
       $platform_id = self::getExpectedPlatformOptions()['source'];
@@ -92,14 +97,19 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       return empty($sites) ? 1 : $sites;
     }
 
-    if ($input->hasOption('all') && $input->getOption('all')) {
-      foreach ($sites as $uuid => $site) {
-        $databases = $this->getDatabasesByEnvironment($uuid);
-        $db_info = reset($databases);
-        $this->doRunCommand($uuid, $db_info->name, $input, $output);
-      }
+    if (!$input->hasOption('all')) {
+      do {
+        $output->writeln('You are about to create a site backup for one of your Cloud sties.');
+        $helper = $this->getHelper('question');
+        $question = new ChoiceQuestion('Pick one of the following sites:', $sites);
+        $site = $helper->ask($input, $output, $question);
 
-      return 0;
+        $output->writeln("Create database backup for site: $site");
+        $quest = new ConfirmationQuestion('Do you want to proceed?');
+        $answer = $helper->ask($input, $output, $quest);
+      } while ($answer !== TRUE);
+
+      return [$site];
     }
 
     return $sites;

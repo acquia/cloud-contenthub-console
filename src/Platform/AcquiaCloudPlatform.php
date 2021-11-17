@@ -322,7 +322,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    */
   public function prefixDomain(string $domain, string $env_id): string {
     $http_conf = $this->get(self::ACE_SITE_HTTP_PROTOCOL);
-    $prefix = isset($http_conf[$env_id]) ?? 'https://';
+    $prefix = $http_conf[$env_id] ?? 'https://';
     return $prefix . $domain;
   }
 
