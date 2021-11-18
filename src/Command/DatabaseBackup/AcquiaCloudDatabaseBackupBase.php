@@ -104,12 +104,11 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
         $question = new ChoiceQuestion('Pick one of the following sites:', $sites);
         $site = $helper->ask($input, $output, $question);
 
-        $output->writeln("Create database backup for site: $site");
         $quest = new ConfirmationQuestion('Do you want to proceed?');
         $answer = $helper->ask($input, $output, $quest);
       } while ($answer !== TRUE);
 
-      return [$site];
+      return [$site => $sites[$site]];
     }
 
     return $sites;
