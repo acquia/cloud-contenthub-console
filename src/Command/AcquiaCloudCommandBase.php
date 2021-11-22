@@ -2,7 +2,6 @@
 
 namespace Acquia\Console\Cloud\Command;
 
-use Acquia\Console\Cloud\Command\Helpers\PlatformSitesTrait;
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
 use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
@@ -21,7 +20,6 @@ abstract class AcquiaCloudCommandBase extends Command implements PlatformCommand
 
   use PlatformCommandTrait;
   use PlatformGroupTrait;
-  use PlatformSitesTrait;
 
   /**
    * ACE Client.

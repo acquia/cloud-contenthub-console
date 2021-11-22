@@ -18,7 +18,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -50,6 +49,10 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
   public const ACE_VENDOR_PATHS = 'acquia.cloud.environment.vendor_paths';
 
   public const ACE_SITE_HTTP_PROTOCOL = 'acquia.cloud.environment.sites';
+
+  public const EmptySitesError = 1;
+
+  public const InvalidSiteUrl = 2;
 
   /**
    * The Acquia Cloud Client Factory object.
@@ -113,12 +116,12 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       self::ACE_API_SECRET => new Question("Acquia Cloud Secret? "),
       self::ACE_APPLICATION_ID => [
         'question' => [AcquiaCloudPlatform::class, 'getApplicationQuestion'],
-        'services' => ['http_client_factory.acquia_cloud']
+        'services' => ['http_client_factory.acquia_cloud'],
       ],
       self::ACE_ENVIRONMENT_NAME => [
         'question' => [AcquiaCloudPlatform::class, 'getEnvironmentQuestion'],
-        'services' => ['http_client_factory.acquia_cloud']
-      ]
+        'services' => ['http_client_factory.acquia_cloud'],
+      ],
     ];
   }
 
@@ -188,7 +191,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $sites = $this->getPlatformSites();
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return 1;
+      return self::EmptySitesError;
     }
 
     $group_name = $input->getOption('group');
@@ -199,7 +202,8 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $platform_id = self::getPlatformId();
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
       if (empty($sites)) {
-        return 3;
+        $output->writeln('<warning>No sites available. Exiting...</warning>');
+        return self::EmptySitesError;
       }
     }
 
@@ -265,7 +269,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $environment = $environments->get($environment_id);
       $sites[$environment->uuid] = [
         'uri' => $this->getActiveDomain($environment_id),
-        'platform_id' => static::getPlatformId()
+        'platform_id' => static::getPlatformId(),
       ];
     }
     return $sites;

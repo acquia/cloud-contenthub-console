@@ -3,7 +3,6 @@
 namespace Acquia\Console\Cloud\Command\DatabaseBackup;
 
 use Acquia\Console\Cloud\Command\AcquiaCloudCommandBase;
-use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,6 +17,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase implements PlatformCommandInterface {
 
   use AcquiaCloudDatabaseBackupHelperTrait;
+
+  public const EmptySitesError = 1;
 
   /**
    * {@inheritdoc}
@@ -37,9 +38,24 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       $sites[$uuid] = $site_data['uri'];
     }
 
-    $sites = $this->sitesFiltering($input, $output, $sites);
-    if (is_int($sites)) {
-      return $sites;
+    $sites = $this->filterSites($input, $output, $sites);
+    if (empty($sites)) {
+      $output->writeln('<warning>No sites available. Exiting...</warning>');
+      return self::EmptySitesError;
+    }
+
+    if (!$input->getOption('all')) {
+      do {
+        $output->writeln('You are about to create a site backup for one of your Cloud sites.');
+        $helper = $this->getHelper('question');
+        $question = new ChoiceQuestion('Pick one of the following sites:', $sites);
+        $site = $helper->ask($input, $output, $question);
+
+        $quest = new ConfirmationQuestion('Do you want to proceed?');
+        $answer = $helper->ask($input, $output, $quest);
+      } while ($answer !== TRUE);
+
+      $sites = [$site => $sites[$site]];
     }
 
     foreach ($sites as $uuid => $site) {
@@ -76,7 +92,7 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
   abstract protected function doRunCommand(string $env_id, string $db, InputInterface $input, OutputInterface $output): int;
 
   /**
-   * Fitler platform sites via groups and other options.
+   * Filter platform sites via groups and other options.
    *
    * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The input object.
@@ -86,7 +102,7 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
    * @return array|int
    *   List of sites after filtering.
    */
-  protected function sitesFiltering(InputInterface $input, OutputInterface $output, array $sites) {
+  protected function filterSites(InputInterface $input, OutputInterface $output, array $sites) {
     if ($input->hasOption('group') && !empty($input->getOption('group'))) {
       $group_name = $input->getOption('group');
       $platform = $this->getPlatform('source');
@@ -94,21 +110,7 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       $platform_id = self::getExpectedPlatformOptions()['source'];
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
 
-      return empty($sites) ? 1 : $sites;
-    }
-
-    if (!$input->getOption('all')) {
-      do {
-        $output->writeln('You are about to create a site backup for one of your Cloud sties.');
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion('Pick one of the following sites:', $sites);
-        $site = $helper->ask($input, $output, $question);
-
-        $quest = new ConfirmationQuestion('Do you want to proceed?');
-        $answer = $helper->ask($input, $output, $quest);
-      } while ($answer !== TRUE);
-
-      return [$site => $sites[$site]];
+      return $sites;
     }
 
     return $sites;

@@ -12,7 +12,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Process\Process;
 
 /**
@@ -40,6 +39,13 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
   /**
    * {@inheritdoc}
    */
+  public function getPlatformSites(): array {
+    return $this->getMultiSites();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function execute(Command $command, InputInterface $input, OutputInterface $output): int {
 
     $environments = new Environments($this->getAceClient());
@@ -54,7 +60,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $sites = $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return 1;
+      return self::EmptySitesError;
     }
 
     $group_name = $input->getOption('group');
@@ -65,7 +71,9 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       $platform_id = self::getPlatformId();
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
       if (empty($sites)) {
-        return 3;
+        $output->writeln('<warning>No sites available. Exiting...</warning>');
+        return self::EmptySitesError;
+        ;
       }
     }
 
@@ -75,7 +83,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       }
       else {
         $output->writeln(sprintf("Given Url does not belong to the sites within the platform. %s", $input_uri));
-        return 4;
+        return self::InvalidSiteUrl;
       }
     }
 
