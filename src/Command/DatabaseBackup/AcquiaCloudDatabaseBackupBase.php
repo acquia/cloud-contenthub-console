@@ -7,6 +7,7 @@ use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class AcquiaCloudDatabaseBackupBase.
@@ -16,6 +17,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase implements PlatformCommandInterface {
 
   use AcquiaCloudDatabaseBackupHelperTrait;
+
+  public const EMPTYSITESERROR = 1;
 
   /**
    * {@inheritdoc}
@@ -35,17 +38,31 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       $sites[$uuid] = $site_data['uri'];
     }
 
-    if ($input->hasOption('all') && $input->getOption('all')) {
-      foreach ($sites as $uuid => $site) {
-        $databases = $this->getDatabasesByEnvironment($uuid);
-        $db_info = reset($databases);
-        $this->doRunCommand($uuid, $db_info->name, $input, $output);
-      }
-      return 0;
+    $sites = $this->filterSites($input, $output, $sites);
+    if (empty($sites)) {
+      $output->writeln('<warning>No sites available. Exiting...</warning>');
+      return self::EMPTYSITESERROR;
     }
 
-    $choice = new ChoiceQuestion('Please choose the site you would like to manage a database backup for:', $sites);
-    $site = $helper->ask($input, $output, $choice);
+    if (!$input->getOption('all')) {
+      do {
+        $output->writeln('You are about to create a site backup for one of your Cloud sites.');
+        $helper = $this->getHelper('question');
+        $question = new ChoiceQuestion('Pick one of the following sites:', $sites);
+        $site = $helper->ask($input, $output, $question);
+
+        $quest = new ConfirmationQuestion('Do you want to proceed?');
+        $answer = $helper->ask($input, $output, $quest);
+      } while ($answer !== TRUE);
+
+      $sites = [$site => $sites[$site]];
+    }
+
+    foreach ($sites as $uuid => $site) {
+      $databases = $this->getDatabasesByEnvironment($uuid);
+      $db_info = reset($databases);
+      $this->doRunCommand($uuid, $db_info->name, $input, $output);
+    }
 
     $databases = [];
     foreach ($this->getDatabasesByEnvironment($site) as $db_info) {
@@ -73,5 +90,28 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
    *   Exit code.
    */
   abstract protected function doRunCommand(string $env_id, string $db, InputInterface $input, OutputInterface $output): int;
+
+  /**
+   * Filter platform sites via groups and other options.
+   *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   The input object.
+   * @param array $sites
+   *   Sites list.
+   *
+   * @return array|int
+   *   List of sites after filtering.
+   */
+  protected function filterSites(InputInterface $input, OutputInterface $output, array $sites) {
+    if ($input->hasOption('group') && !empty($input->getOption('group'))) {
+      $group_name = $input->getOption('group');
+      $platform = $this->getPlatform('source');
+      $alias = $platform->getAlias();
+      $platform_id = self::getExpectedPlatformOptions()['source'];
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
+    }
+
+    return $sites;
+  }
 
 }

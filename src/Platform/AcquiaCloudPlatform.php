@@ -22,6 +22,7 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Process;
+use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 
 /**
  * Class AcquiaCloudPlatform.
@@ -31,6 +32,7 @@ use Symfony\Component\Process\Process;
 class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface, PlatformDependencyInjectionInterface {
 
   use PlatformArgumentInjectionTrait;
+  use PlatformGroupTrait;
 
   const PLATFORM_NAME = "Acquia Cloud";
 
@@ -47,6 +49,10 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
   public const ACE_VENDOR_PATHS = 'acquia.cloud.environment.vendor_paths';
 
   public const ACE_SITE_HTTP_PROTOCOL = 'acquia.cloud.environment.sites';
+
+  public const EMPTYSITESERROR = 1;
+
+  public const INVALIDSITEURL = 2;
 
   /**
    * The Acquia Cloud Client Factory object.
@@ -110,12 +116,12 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       self::ACE_API_SECRET => new Question("Acquia Cloud Secret? "),
       self::ACE_APPLICATION_ID => [
         'question' => [AcquiaCloudPlatform::class, 'getApplicationQuestion'],
-        'services' => ['http_client_factory.acquia_cloud']
+        'services' => ['http_client_factory.acquia_cloud'],
       ],
       self::ACE_ENVIRONMENT_NAME => [
         'question' => [AcquiaCloudPlatform::class, 'getEnvironmentQuestion'],
-        'services' => ['http_client_factory.acquia_cloud']
-      ]
+        'services' => ['http_client_factory.acquia_cloud'],
+      ],
     ];
   }
 
@@ -182,19 +188,35 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    * {@inheritdoc}
    */
   public function execute(Command $command, InputInterface $input, OutputInterface $output) : int {
-    $environments = new Environments($this->getAceClient());
     $sites = $this->getPlatformSites();
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return 1;
+      return self::EMPTYSITESERROR;
     }
 
+    $group_name = $input->getOption('group');
     $input_uri = $input->getOption('uri');
-    $sites = array_column($sites, 'uri');
-    $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
+
+    if (!$input_uri && $group_name) {
+      $alias = $this->getAlias();
+      $platform_id = self::getPlatformId();
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
+      if (empty($sites)) {
+        $output->writeln('<warning>No sites available. Exiting...</warning>');
+        return self::EMPTYSITESERROR;
+      }
+    }
+
+    $sites_uri = array_column($sites, 'uri');
+    $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites_uri, $command);
     $exit_code = 0;
     $vendor_paths = $this->get(self::ACE_VENDOR_PATHS);
+    $environments = new Environments($this->getAceClient());
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
+      if (!in_array($environment_id, array_keys($sites), TRUE)) {
+        continue;
+      }
+
       $uri = $this->getActivedomain($environment_id);
       if (isset($input_uri) && $input_uri !== $uri) {
         continue;
@@ -247,7 +269,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $environment = $environments->get($environment_id);
       $sites[$environment->uuid] = [
         'uri' => $this->getActiveDomain($environment_id),
-        'platform_id' => static::getPlatformId()
+        'platform_id' => static::getPlatformId(),
       ];
     }
     return $sites;
@@ -282,7 +304,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $domains = [];
     foreach ($this->get(self::ACE_ENVIRONMENT_DETAILS) as $application_id => $environment_id) {
       $response = $client->request('get', "/environments/{$environment_id}");
-      $domains[] = [
+      $domains[$environment_id] = [
         'active_domain' => $this->prefixDomain($response->active_domain, $environment_id),
         'env_uuid' => $environment_id,
       ];
@@ -304,7 +326,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
    */
   public function prefixDomain(string $domain, string $env_id): string {
     $http_conf = $this->get(self::ACE_SITE_HTTP_PROTOCOL);
-    $prefix = isset($http_conf[$env_id]) ? $http_conf[$env_id] : 'https://';
+    $prefix = $http_conf[$env_id] ?? 'https://';
     return $prefix . $domain;
   }
 

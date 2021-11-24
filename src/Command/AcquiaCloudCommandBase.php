@@ -3,6 +3,7 @@
 namespace Acquia\Console\Cloud\Command;
 
 use Acquia\Console\Cloud\Platform\AcquiaCloudPlatform;
+use Acquia\Console\Helpers\Command\PlatformGroupTrait;
 use EclipseGc\CommonConsole\Platform\PlatformCommandTrait;
 use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Command\Command;
@@ -18,6 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 abstract class AcquiaCloudCommandBase extends Command implements PlatformCommandInterface {
 
   use PlatformCommandTrait;
+  use PlatformGroupTrait;
 
   /**
    * ACE Client.

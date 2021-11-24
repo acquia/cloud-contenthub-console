@@ -39,8 +39,14 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
   /**
    * {@inheritdoc}
    */
+  public function getPlatformSites(): array {
+    return $this->getMultiSites();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function execute(Command $command, InputInterface $input, OutputInterface $output): int {
-    $exit_code = 0;
 
     $environments = new Environments($this->getAceClient());
     $env_id = current($this->get(self::ACE_ENVIRONMENT_DETAILS));
@@ -50,25 +56,38 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $sshUrl = $environment->sshUrl;
     [, $url] = explode('@', $sshUrl);
     [$application] = explode('.', $url);
+
     $sites = $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return 1;
+      return self::EMPTYSITESERROR;
     }
 
+    $group_name = $input->getOption('group');
     $input_uri = $input->getOption('uri');
+
+    if (!$input_uri && $group_name) {
+      $alias = $this->getAlias();
+      $platform_id = self::getPlatformId();
+      $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
+      if (empty($sites)) {
+        $output->writeln('<warning>No sites available. Exiting...</warning>');
+        return self::EMPTYSITESERROR;
+      }
+    }
+
     if ($input_uri) {
       if (in_array($input_uri, $sites, TRUE)) {
         $sites = [$input_uri];
       }
       else {
         $output->writeln(sprintf("Given Url does not belong to the sites within the platform. %s", $input_uri));
-        return 2;
+        return self::INVALIDSITEURL;
       }
     }
 
     $args = $this->dispatchPlatformArgumentInjectionEvent($input, $sites, $command);
-
+    $exit_code = 0;
     foreach ($sites as $uri) {
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $uri));
       $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_path[$env_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
