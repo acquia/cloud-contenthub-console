@@ -109,8 +109,6 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       $alias = $platform->getAlias();
       $platform_id = self::getExpectedPlatformOptions()['source'];
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
-
-      return $sites;
     }
 
     return $sites;
