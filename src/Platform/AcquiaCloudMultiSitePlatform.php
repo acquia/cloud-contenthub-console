@@ -73,7 +73,6 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       if (empty($sites)) {
         $output->writeln('<warning>No sites available. Exiting...</warning>');
         return self::EmptySitesError;
-        ;
       }
     }
 
