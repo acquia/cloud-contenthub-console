@@ -50,9 +50,9 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
 
   public const ACE_SITE_HTTP_PROTOCOL = 'acquia.cloud.environment.sites';
 
-  public const EmptySitesError = 1;
+  public const EMPTYSITESERROR = 1;
 
-  public const InvalidSiteUrl = 2;
+  public const INVALIDSITEURL = 2;
 
   /**
    * The Acquia Cloud Client Factory object.
@@ -191,7 +191,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
     $sites = $this->getPlatformSites();
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return self::EmptySitesError;
+      return self::EMPTYSITESERROR;
     }
 
     $group_name = $input->getOption('group');
@@ -203,7 +203,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
       if (empty($sites)) {
         $output->writeln('<warning>No sites available. Exiting...</warning>');
-        return self::EmptySitesError;
+        return self::EMPTYSITESERROR;
       }
     }
 

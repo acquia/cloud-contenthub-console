@@ -18,7 +18,7 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
 
   use AcquiaCloudDatabaseBackupHelperTrait;
 
-  public const EmptySitesError = 1;
+  public const EMPTYSITESERROR = 1;
 
   /**
    * {@inheritdoc}
@@ -41,7 +41,7 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
     $sites = $this->filterSites($input, $output, $sites);
     if (empty($sites)) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return self::EmptySitesError;
+      return self::EMPTYSITESERROR;
     }
 
     if (!$input->getOption('all')) {

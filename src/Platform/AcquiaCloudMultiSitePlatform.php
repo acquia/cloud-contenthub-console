@@ -60,7 +60,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $sites = $this->getPlatformMultiSites($environment, $application, $output, $vendor_path[$env_id]);
     if (!$sites) {
       $output->writeln('<warning>No sites available. Exiting...</warning>');
-      return self::EmptySitesError;
+      return self::EMPTYSITESERROR;
     }
 
     $group_name = $input->getOption('group');
@@ -72,7 +72,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       $sites = $this->filterSitesByGroup($group_name, $sites, $output, $alias, $platform_id);
       if (empty($sites)) {
         $output->writeln('<warning>No sites available. Exiting...</warning>');
-        return self::EmptySitesError;
+        return self::EMPTYSITESERROR;
       }
     }
 
@@ -82,7 +82,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
       }
       else {
         $output->writeln(sprintf("Given Url does not belong to the sites within the platform. %s", $input_uri));
-        return self::InvalidSiteUrl;
+        return self::INVALIDSITEURL;
       }
     }
 
