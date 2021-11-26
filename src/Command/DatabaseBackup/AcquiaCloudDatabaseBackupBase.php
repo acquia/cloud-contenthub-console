@@ -7,7 +7,6 @@ use EclipseGc\CommonConsole\PlatformCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class AcquiaCloudDatabaseBackupBase.
@@ -44,25 +43,18 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
       return self::EMPTYSITESERROR;
     }
 
-    if (!$input->getOption('all')) {
-      do {
-        $output->writeln('You are about to create a site backup for one of your Cloud sites.');
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion('Pick one of the following sites:', $sites);
-        $site = $helper->ask($input, $output, $question);
+    if ($input->hasOption('all') && $input->getOption('all')) {
+      foreach ($sites as $uuid => $site) {
+        $databases = $this->getDatabasesByEnvironment($uuid);
+        $db_info = reset($databases);
+        $this->doRunCommand($uuid, $db_info->name, $input, $output);
+      }
 
-        $quest = new ConfirmationQuestion('Do you want to proceed?');
-        $answer = $helper->ask($input, $output, $quest);
-      } while ($answer !== TRUE);
-
-      $sites = [$site => $sites[$site]];
+      return 0;
     }
 
-    foreach ($sites as $uuid => $site) {
-      $databases = $this->getDatabasesByEnvironment($uuid);
-      $db_info = reset($databases);
-      $this->doRunCommand($uuid, $db_info->name, $input, $output);
-    }
+    $question = new ChoiceQuestion('Please choose the site you would like to manage a database backup for:', $sites);
+    $site = $helper->ask($input, $output, $question);
 
     $databases = [];
     foreach ($this->getDatabasesByEnvironment($site) as $db_info) {
