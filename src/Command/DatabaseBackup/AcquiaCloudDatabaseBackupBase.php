@@ -96,6 +96,8 @@ abstract class AcquiaCloudDatabaseBackupBase extends AcquiaCloudCommandBase impl
    *
    * @param \Symfony\Component\Console\Input\InputInterface $input
    *   The input object.
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   The output stream.
    * @param array $sites
    *   Sites list.
    *
