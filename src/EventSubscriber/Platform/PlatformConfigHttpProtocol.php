@@ -34,7 +34,7 @@ class PlatformConfigHttpProtocol implements EventSubscriberInterface {
    */
   protected $platformTypes = [
     'Acquia Cloud',
-    'Acquia Cloud Multi Site'
+    'Acquia Cloud Multi Site',
   ];
 
   /**

@@ -11,7 +11,7 @@ return [
     'name' => 'dev',
     'active_domain' => 'test1.devcloud.acquia-sites.com',
     'databases' => [
-      313143 => 'test1'
+      313143 => 'test1',
     ],
   ],
   [
@@ -19,7 +19,7 @@ return [
     'name' => 'test',
     'active_domain' => 'test2.devcloud.acquia-sites.com',
     'databases' => [
-      313144 => 'test1'
+      313144 => 'test1',
     ],
   ],
   [
@@ -27,7 +27,7 @@ return [
     'name' => 'staging',
     'active_domain' => 'test3.devcloud.acquia-sites.com',
     'databases' => [
-      313145 => 'test1'
+      313145 => 'test1',
     ],
   ],
 ];

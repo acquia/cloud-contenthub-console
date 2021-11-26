@@ -36,7 +36,11 @@ class AcquiaCloudDatabaseBackupListTest extends AcquiaCloudDatabaseBackupTestBas
       AcquiaCloudDatabaseBackupList::class,
       $arguments
     );
-    $tester->setInputs([1, 0, '2017-01-08T05:00:02Z'])->execute([]);
+    $tester->setInputs([
+      '111111-11111111-c36a-401a-9724-fd8072a607d7',
+      0,
+      '2017-01-08T05:00:02Z',
+    ])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString($this->getFixtureContents('ace_db_list_output.txt'), $output, 'Backups listed for the given database.');
@@ -54,7 +58,7 @@ class AcquiaCloudDatabaseBackupListTest extends AcquiaCloudDatabaseBackupTestBas
           $environment_response,
           $environment_response,
           $db_response,
-          []
+          [],
         ],
       ],
     ];
@@ -62,7 +66,10 @@ class AcquiaCloudDatabaseBackupListTest extends AcquiaCloudDatabaseBackupTestBas
       AcquiaCloudDatabaseBackupList::class,
       $arguments
     );
-    $tester->setInputs([1, 0])->execute([]);
+    $tester->setInputs([
+      '111111-11111111-c36a-401a-9724-fd8072a607d7',
+      0,
+    ])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('No backups found', $output, 'Backups listed for the given database.');

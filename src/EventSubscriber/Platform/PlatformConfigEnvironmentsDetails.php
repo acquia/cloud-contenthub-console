@@ -51,8 +51,8 @@ class PlatformConfigEnvironmentsDetails implements EventSubscriberInterface {
   public function onPlatformConfig(PlatformConfigEvent $event) {
     $config = $event->getConfig();
     if (!in_array($config->get('platform.type'), [
-        'Acquia Cloud',
-        'Acquia Cloud Multi Site'
+      'Acquia Cloud',
+      'Acquia Cloud Multi Site',
     ], TRUE)) {
       return;
     }
