@@ -79,8 +79,8 @@ abstract class AcquiaCloudDatabaseBackupTestBase extends TestCase {
         AcquiaCloudPlatform::ACE_API_SECRET => 'test_secret',
         AcquiaCloudPlatform::ACE_APPLICATION_ID => ['test1'],
         AcquiaCloudPlatform::ACE_ENVIRONMENT_DETAILS => [
-          '111111-11111111-c36a-401a-9724-fd8072a607d7' => '111111-11111111-c36a-401a-9724-fd8072a607d7'
-        ]
+          '111111-11111111-c36a-401a-9724-fd8072a607d7' => '111111-11111111-c36a-401a-9724-fd8072a607d7',
+        ],
       ],
       $client_mock_callback
     );

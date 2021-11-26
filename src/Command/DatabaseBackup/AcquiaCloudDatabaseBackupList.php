@@ -51,7 +51,7 @@ class AcquiaCloudDatabaseBackupList extends AcquiaCloudDatabaseBackupBase {
         'env_id' => $env_id,
         'database' => $db,
         'completed_at' => $backup->completedAt,
-        'backup_id' => $backup->id
+        'backup_id' => $backup->id,
       ];
       $table->addRow([$backup->completedAt, $backup->id, $backup->type]);
     }

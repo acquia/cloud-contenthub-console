@@ -42,11 +42,11 @@ trait PlatformCommandTestHelperTrait {
     $dispatcher = new EventDispatcher();
     $dispatcher->addListener(CommonConsoleEvents::ADD_PLATFORM_TO_COMMAND, [
       $subscriber,
-      'onAddPlatformToCommand'
+      'onAddPlatformToCommand',
     ]);
     $dispatcher->addListener(CommonConsoleEvents::ADD_PLATFORM_TO_COMMAND, [
       $any_platform,
-      'onAddPlatformToCommand'
+      'onAddPlatformToCommand',
     ]);
     return $dispatcher;
   }

@@ -55,13 +55,20 @@ class AcquiaCloudDatabaseBackupRestoreTest extends AcquiaCloudDatabaseBackupTest
       AcquiaCloudDatabaseBackupRestore::class,
       $arguments
     );
-    $tester->setInputs([1, 0, '2017-01-08T05:00:02Z'])->execute([]);
+    $tester->setInputs([
+      '111111-11111111-c36a-401a-9724-fd8072a607d7',
+      0,
+      '2017-01-08T05:00:02Z',
+    ])->execute([]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Database backup restore.', $output);
     $this->assertStringContainsString('Process has been queued. Check the task logs for more information.', $output);
 
-    $tester->setInputs([1, 0, '2017-01-08T05:00:02Z'])->execute(['--wait' => TRUE]);
+    $tester->setInputs(['111111-11111111-c36a-401a-9724-fd8072a607d7',
+      0,
+      '2017-01-08T05:00:02Z',
+    ])->execute(['--wait' => TRUE]);
     $output = $tester->getDisplay();
 
     $this->assertStringContainsString('Database backup restored', $output, 'Wait function works.');

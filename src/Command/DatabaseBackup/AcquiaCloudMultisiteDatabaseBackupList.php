@@ -54,12 +54,12 @@ class AcquiaCloudMultisiteDatabaseBackupList extends AcquiaCloudMultisiteDatabas
           'env_id' => $env_id,
           'database' => $db_name,
           'completed_at' => $backup->completedAt,
-          'backup_id' => $backup->id
+          'backup_id' => $backup->id,
         ];
         $table->addRow([
           $db_name,
           $backup->completedAt,
-          $backup->id, $backup->type
+          $backup->id, $backup->type,
         ]);
       }
     }
