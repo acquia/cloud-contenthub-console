@@ -196,6 +196,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
 
     $group_name = $input->getOption('group');
     $input_uri = $input->getOption('uri');
+    $process_timeout = (int) $input->getOption('timeout');
 
     if (!$input_uri && $group_name) {
       $alias = $this->getAlias();
@@ -227,7 +228,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
       $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_paths[$environment_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
-      $exit_code += $this->runner->run($process, $this, $output);
+      $exit_code += $this->runner->run($process, $this, $output, $process_timeout);
     }
 
     return $exit_code;
