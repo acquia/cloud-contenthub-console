@@ -65,7 +65,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
 
     $group_name = $input->getOption('group');
     $input_uri = $input->getOption('uri');
-    $process_timeout = $input->hasOption('timeout') && ($timeout = (int) $input->getOption('timeout')) > 3000 ? $timeout : 3000;
+    $process_timeout = $input->getOption('timout');
 
     if (!$input_uri && $group_name) {
       $alias = $this->getAlias();
