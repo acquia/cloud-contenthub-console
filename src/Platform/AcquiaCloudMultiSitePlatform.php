@@ -65,6 +65,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
 
     $group_name = $input->getOption('group');
     $input_uri = $input->getOption('uri');
+    $process_timeout = (int) $input->getOption('timeout');
 
     if (!$input_uri && $group_name) {
       $alias = $this->getAlias();
@@ -91,7 +92,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     foreach ($sites as $uri) {
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $uri));
       $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_path[$env_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
-      $exit_code += $this->runner->run($process, $this, $output);
+      $exit_code += $this->runner->run($process, $this, $output, $process_timeout);
     }
 
     return $exit_code;
