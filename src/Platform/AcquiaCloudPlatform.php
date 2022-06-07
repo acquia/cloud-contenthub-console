@@ -227,7 +227,7 @@ class AcquiaCloudPlatform extends PlatformBase implements PlatformSitesInterface
       $sshUrl = $environment->sshUrl;
       [, $url] = explode('@', $sshUrl);
       [$application] = explode('.', $url);
-      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_paths[$environment_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
+      $process = Process::fromShellCommandline("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_paths[$environment_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
       $exit_code += $this->runner->run($process, $this, $output, $process_timeout);
     }
 
