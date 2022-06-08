@@ -91,7 +91,7 @@ class AcquiaCloudMultiSitePlatform extends AcquiaCloudPlatform {
     $exit_code = 0;
     foreach ($sites as $uri) {
       $output->writeln(sprintf("Attempting to execute requested command in environment: %s", $uri));
-      $process = new Process("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_path[$env_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
+      $process = Process::fromShellCommandline("ssh $sshUrl 'cd /var/www/html/$application; cd $vendor_path[$env_id]; ./vendor/bin/commoncli {$args[$uri]->__toString()}'");
       $exit_code += $this->runner->run($process, $this, $output, $process_timeout);
     }
 

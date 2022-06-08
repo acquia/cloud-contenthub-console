@@ -29,7 +29,7 @@ abstract class AcquiaCloudMultisiteDatabaseBackupBase extends AcquiaCloudCommand
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $helper = $this->getHelper('question');
     /** @var \Acquia\Console\Cloud\Platform\AcquiaCloudMultiSitePlatform $platform */
     $platform = $this->getPlatform('source');
