@@ -29,6 +29,7 @@ return [
       ],
     'region' => 'us-east-1',
     'balancer' => 'balancers',
+    'platform' => 'platform',
     'status' => 'normal',
     'type' => 'drupal',
     'size' => NULL,
