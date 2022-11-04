@@ -22,7 +22,6 @@ jobs:
 
       - name: Install composer dependencies
         run: |
-          composer require --dev php-coveralls/php-coveralls
           composer install
 
       - name: Run phpcs
