@@ -1,0 +1,9 @@
+parameters:
+  level: 1
+  paths:
+    - ./src
+  ignoreErrors:
+    - '#Unsafe usage of new static\(\).#'
+    - '#Call to static method service\(\) on an unknown class Drupal.#'
+  excludePaths:
+  	- test/

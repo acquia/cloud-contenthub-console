@@ -41,7 +41,7 @@ class AcquiaCloudMultisiteDatabaseBackupList extends AcquiaCloudMultisiteDatabas
     foreach ($databases as $db_name) {
       $list[$db_name] = $this->getBackupList($env_id, $db_name);
     }
-    if (empty($list) && !isset($list)) {
+    if (empty($list)) {
       $output->writeln('No backups found for any database.');
       return 1;
     }

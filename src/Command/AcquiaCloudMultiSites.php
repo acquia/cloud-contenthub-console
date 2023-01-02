@@ -70,7 +70,7 @@ class AcquiaCloudMultiSites extends Command implements PlatformBootStrapCommandI
     foreach ($directories as $directory) {
       if (file_exists("$directory/sites/sites.php")) {
         include "$directory/sites/sites.php";
-        return $sites ?? [];
+        return $sites;
       }
     }
 
