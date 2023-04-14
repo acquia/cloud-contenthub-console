@@ -128,7 +128,7 @@ trait AcquiaCloudDatabaseBackupHelperTrait {
     return new OperationResponse(
       $this->acquiaCloudClient->request(
         'delete',
-        "/environments/${env_id}/databases/${db}/backups/${backup_id}"
+        "/environments/{$env_id}/databases/{$db}/backups/{$backup_id}"
       )
     );
   }
