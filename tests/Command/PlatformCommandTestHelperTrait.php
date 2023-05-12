@@ -16,6 +16,7 @@ use EclipseGc\CommonConsole\Platform\PlatformStorage;
 use EclipseGc\CommonConsole\PlatformInterface;
 use EclipseGc\CommonConsole\ProcessRunner;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,6 +30,8 @@ use Symfony\Component\Process\Process;
  * @package Acquia\Console\Cloud\Tests\Command
  */
 trait PlatformCommandTestHelperTrait {
+
+  use ProphecyTrait;
 
   /**
    * Returns a dispatcher bootstrapped for platform commands.
