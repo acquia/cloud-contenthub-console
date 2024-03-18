@@ -21,7 +21,7 @@ class AcquiaCloudDatabaseBackupList extends AcquiaCloudDatabaseBackupBase {
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'ace:database:backup:list';
+  public static $defaultName = 'ace:database:backup:list';
 
   /**
    * {@inheritdoc}
