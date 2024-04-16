@@ -26,6 +26,13 @@ class AcquiaCloudMultisiteDatabaseBackupRestore extends AcquiaCloudMultisiteData
   /**
    * {@inheritdoc}
    */
+  public static function getDefaultName(): string {
+    return self::$defaultName;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function configure() {
     $this->setDescription('Restores database backups for ACE Multisite environments.');
     $this->addOption('wait', 'w', InputOption::VALUE_NONE, 'Wait for task until it is completed.');
