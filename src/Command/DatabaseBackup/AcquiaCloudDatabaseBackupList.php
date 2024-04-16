@@ -26,6 +26,13 @@ class AcquiaCloudDatabaseBackupList extends AcquiaCloudDatabaseBackupBase {
   /**
    * {@inheritdoc}
    */
+  public static function getDefaultName(): string {
+    return self::$defaultName;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function configure() {
     $this->setDescription('Lists database backups.');
     $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Perform backup operation for all sites in the platform.');
